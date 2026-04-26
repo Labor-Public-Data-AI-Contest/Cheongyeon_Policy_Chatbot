@@ -3,7 +3,6 @@ import ChatPage from "./pages/ChatPage";
 
 function App() {
   const [dark, setDark] = useState(false);
-
   // 처음 로드 시 저장값 불러오기
   useEffect(() => {
     const saved = localStorage.getItem("dark");
@@ -21,7 +20,7 @@ function App() {
         onClick={() => setDark(!dark)}
         style={{
           position: "absolute",
-          top: 20,
+          top: 10,
           right: 20,
           padding: "8px 12px",
           borderRadius: "8px",

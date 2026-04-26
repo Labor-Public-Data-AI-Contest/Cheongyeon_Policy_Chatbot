@@ -5,9 +5,9 @@ function ChatPage() {
   return (
     <div className="chat-page">
       <div className="chat-container">
-        <div className="chat-header">
+        {/* <div className="chat-header">
           청년 지원 AI 도우미
-        </div>
+        </div> */}
 
         <ChatBox />
       </div>
