@@ -1,0 +1,52 @@
+.chat-header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 56px;
+  background: var(--card);
+  border-bottom: 1px solid var(--sub);
+}
+
+/* 제목 중앙 */
+.header-title {
+  font-weight: bold;
+  font-size: 16px;
+  color: var(--text);
+}
+
+/* 오른쪽 묶음 */
+.header-right {
+  position: absolute;
+  right: 20px;
+
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* 로그인 버튼 */
+.login-btn {
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+}
+
+/* 다크모드 버튼 */
+.theme-toggle {
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: none;
+  background: var(--sub);
+  color: var(--text);
+  cursor: pointer;
+}
+
+.login-btn:hover,
+.theme-toggle:hover {
+  opacity: 0.85;
+}
