@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "../styles/Signup.css";
+import api from "../api/axios";
 
 function SignupPage() {
     const navigate = useNavigate();
@@ -12,13 +13,11 @@ function SignupPage() {
     const [address, setAddress] = useState("");
     const [age, setAge] = useState("");
 
-    // 비밀번호 규칙: 숫자 + 영어 + 특수문자 + 8자 이상
     const passwordRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
     const isPasswordValid = passwordRegex.test(password);
     const isPasswordSame = password === confirmPw;
 
-    const handleSignup = () => {
-        // 필수 입력 체크
+    const handleSignup = async () => {
         if (
             !userId.trim() ||
             !password.trim() ||
@@ -31,34 +30,36 @@ function SignupPage() {
             return;
         }
 
-        // 나이 제한 
         if (Number(age) < 1 || Number(age) > 100) {
             alert("나이는 1~100 사이로 입력해주세요.");
             return;
         }
 
-        // 비밀번호 규칙 체크
         if (!isPasswordValid) {
-            alert("비밀번호는 영어, 특수문자를 포함해 8자 이상이어야 합니다.");
+            alert("비밀번호는 숫자, 영어, 특수문자를 포함해 8자 이상이어야 합니다.");
             return;
         }
 
-        // 비밀번호 일치
         if (!isPasswordSame) {
             alert("비밀번호가 일치하지 않습니다.");
             return;
         }
 
-        console.log({
-            userId,
-            password,
-            name,
-            address,
-            age,
-        });
+        try {
+            await api.post("/api/auth/signup", {
+                userid: userId,
+                userpassword: password,
+                name,
+                address,
+                age: Number(age),
+            });
 
-        alert("회원가입 완료!");
-        navigate("/login");
+            alert("회원가입 완료!");
+            navigate("/login");
+        } catch (error) {
+            alert("회원가입 실패");
+            console.error(error);
+        }
     };
 
     return (

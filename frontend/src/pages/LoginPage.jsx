@@ -1,11 +1,30 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import "../styles/Login.css";
+import api from "../api/axios";
+import { useAuth } from "../context/AuthContext"; 
 
 function LoginPage() {
     const navigate = useNavigate();
+    const { login } = useAuth(); // ⭐ 추가
 
-    const handleLogin = () => {
-        navigate("/");
+    const [userid, setUserid] = useState("");
+    const [userpassword, setUserpassword] = useState("");
+
+    const handleLogin = async () => {
+        try {
+            const res = await api.post("/api/auth/login", {
+                userid,
+                userpassword,
+            });
+
+            login(res.data.token);
+
+            navigate("/");
+        } catch (error) {
+            alert("로그인 실패");
+            console.error(error);
+        }
     };
 
     return (
@@ -13,8 +32,19 @@ function LoginPage() {
             <div className="login-card">
                 <h2>로그인</h2>
 
-                <input type="text" placeholder="아이디" />
-                <input type="password" placeholder="비밀번호" />
+                <input
+                    type="text"
+                    placeholder="아이디"
+                    value={userid}
+                    onChange={(e) => setUserid(e.target.value)}
+                />
+
+                <input
+                    type="password"
+                    placeholder="비밀번호"
+                    value={userpassword}
+                    onChange={(e) => setUserpassword(e.target.value)}
+                />
 
                 <button onClick={handleLogin}>로그인</button>
 
