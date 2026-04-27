@@ -8,7 +8,6 @@ function ChatBox() {
 
     const chatEndRef = useRef(null);
 
-    // 자동 스크롤
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages]);
@@ -25,13 +24,7 @@ function ChatBox() {
     };
 
     return (
-        <div className="chat-container">
-
-            {/*  header  */}
-            <div className="chat-header">
-                청년 지원 AI 도우미
-            </div>
-
+        <>
             {/* body */}
             <div className="chat-body">
                 {messages.map((msg, i) => (
@@ -45,7 +38,7 @@ function ChatBox() {
                 <div ref={chatEndRef}></div>
             </div>
 
-            {/*  footer */}
+            {/* footer */}
             <div className="chat-footer">
                 <input
                     value={input}
@@ -60,8 +53,7 @@ function ChatBox() {
                 />
                 <button onClick={sendMessage}>전송</button>
             </div>
-
-        </div>
+        </>
     );
 }
 

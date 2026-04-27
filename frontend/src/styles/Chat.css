@@ -35,17 +35,38 @@ body {
     width: 100%;
     height: 100%;
     background: var(--card);
+    justify-content: space-between;
     display: flex;
     flex-direction: column;
 }
 
 /* ===== 헤더 ===== */
 .chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     padding: 16px;
-    font-weight: bold;
-    text-align: center;
     border-bottom: 1px solid var(--sub);
     background: var(--card);
+}
+
+/* 제목 가운데 고정 */
+.chat-header .title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: bold;
+}
+
+/* 로그인 버튼 */
+.login-btn {
+    left: -20px; 
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
 }
 
 /* ===== 채팅 영역 ===== */

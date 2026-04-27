@@ -1,14 +1,12 @@
+import Header from "../components/Header";
 import ChatBox from "../components/ChatBox";
 import "../styles/Chat.css";
 
-function ChatPage() {
+function ChatPage({ dark, setDark }) {
   return (
     <div className="chat-page">
       <div className="chat-container">
-        {/* <div className="chat-header">
-          청년 지원 AI 도우미
-        </div> */}
-
+        <Header dark={dark} setDark={setDark} />
         <ChatBox />
       </div>
     </div>
