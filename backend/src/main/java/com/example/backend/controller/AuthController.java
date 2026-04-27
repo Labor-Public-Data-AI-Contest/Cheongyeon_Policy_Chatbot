@@ -7,6 +7,8 @@ import com.example.backend.dto.SignupRequestDto;
 import com.example.backend.entity.User;
 import com.example.backend.service.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -24,16 +26,23 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public LoginResponseDto login(@RequestBody LoginRequestDto dto) {
-        User user = userService.login(dto);
+    public ResponseEntity<?> login(@RequestBody LoginRequestDto dto) {
+        try {
+            User user = userService.login(dto);
 
-        String token = jwtUtil.createToken(user.getUserid());
+            String token = jwtUtil.createToken(user.getUserid());
 
-        return new LoginResponseDto(
-                token,
-                user.getId(),
-                user.getUserid(),
-                user.getName()
-        );
+            return ResponseEntity.ok(new LoginResponseDto(
+                    token,
+                    user.getId(),
+                    user.getUserid(),
+                    user.getName()
+            ));
+
+        } catch (RuntimeException e) {
+            return ResponseEntity
+                    .status(HttpStatus.UNAUTHORIZED)
+                    .body(e.getMessage());
+        }
     }
 }

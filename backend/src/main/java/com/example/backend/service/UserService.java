@@ -34,14 +34,19 @@ public class UserService {
 
     public User login(LoginRequestDto dto) {
 
-        User user = userRepository.findByUserid(dto.getUserid())
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 아이디입니다."));
+    User user = userRepository.findByUserid(dto.getUserid())
+            .orElseThrow(() -> new RuntimeException("INVALID_LOGIN"));
 
-        if (!passwordEncoder.matches(dto.getUserpassword(), user.getUserpassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
-        }
+    if (!passwordEncoder.matches(dto.getUserpassword(), user.getUserpassword())) {
+        throw new RuntimeException("INVALID_LOGIN");
+    }
 
         return user;
+    }
+    
+    public User findByUserid(String userid) {
+        return userRepository.findByUserid(userid)
+            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     }
 
 }
