@@ -11,11 +11,49 @@ function SignupPage() {
     const [confirmPw, setConfirmPw] = useState("");
     const [name, setName] = useState("");
     const [address, setAddress] = useState("");
+    const [detailAddress, setDetailAddress] = useState("");
     const [age, setAge] = useState("");
 
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
-    const isPasswordValid = passwordRegex.test(password);
-    const isPasswordSame = password === confirmPw;
+    const [isIdChecked, setIsIdChecked] = useState(false);
+    const [isIdAvailable, setIsIdAvailable] = useState(false);
+
+    const openAddress = () => {
+        if (!window.daum || !window.daum.Postcode) {
+            alert("주소 검색 로딩 중입니다.");
+            return;
+        }
+
+        new window.daum.Postcode({
+            oncomplete: function (data) {
+                setAddress(data.address);
+            }
+        }).open();
+    };
+
+    const checkUserId = async () => {
+        if (!userId.trim()) {
+            alert("아이디를 입력해주세요.");
+            return;
+        }
+
+        try {
+            const res = await api.get("/api/auth/check-id", {
+                params: { userid: userId }
+            });
+
+            if (res.data) {
+                alert("이미 사용 중인 아이디입니다.");
+                setIsIdChecked(true);
+                setIsIdAvailable(false);
+            } else {
+                alert("사용 가능한 아이디입니다.");
+                setIsIdChecked(true);
+                setIsIdAvailable(true);
+            }
+        } catch (e) {
+            alert("중복 확인 실패");
+        }
+    };
 
     const handleSignup = async () => {
         if (
@@ -30,18 +68,8 @@ function SignupPage() {
             return;
         }
 
-        if (Number(age) < 1 || Number(age) > 100) {
-            alert("나이는 1~100 사이로 입력해주세요.");
-            return;
-        }
-
-        if (!isPasswordValid) {
-            alert("비밀번호는 숫자, 영어, 특수문자를 포함해 8자 이상이어야 합니다.");
-            return;
-        }
-
-        if (!isPasswordSame) {
-            alert("비밀번호가 일치하지 않습니다.");
+        if (!isIdChecked || !isIdAvailable) {
+            alert("아이디 중복 확인을 해주세요.");
             return;
         }
 
@@ -50,7 +78,7 @@ function SignupPage() {
                 userid: userId,
                 userpassword: password,
                 name,
-                address,
+                address: `${address} ${detailAddress}`.trim(),
                 age: Number(age),
             });
 
@@ -58,7 +86,6 @@ function SignupPage() {
             navigate("/login");
         } catch (error) {
             alert("회원가입 실패");
-            console.error(error);
         }
     };
 
@@ -67,12 +94,29 @@ function SignupPage() {
             <div className="signup-card">
                 <h2>회원가입</h2>
 
-                <input
-                    type="text"
-                    placeholder="아이디 *"
-                    value={userId}
-                    onChange={(e) => setUserId(e.target.value)}
-                />
+                <div className="id-check-row">
+                    <input
+                        type="text"
+                        placeholder="아이디 *"
+                        value={userId}
+                        onChange={(e) => {
+                            setUserId(e.target.value);
+                            setIsIdChecked(false);
+                            setIsIdAvailable(false);
+                        }}
+                    />
+                    <button type="button" onClick={checkUserId}>
+                        중복확인
+                    </button>
+                </div>
+
+                {isIdChecked && isIdAvailable && (
+                    <p className="success-text">사용 가능한 아이디입니다.</p>
+                )}
+
+                {isIdChecked && !isIdAvailable && (
+                    <p className="error-text">이미 사용 중인 아이디입니다.</p>
+                )}
 
                 <input
                     type="password"
@@ -81,22 +125,12 @@ function SignupPage() {
                     onChange={(e) => setPassword(e.target.value)}
                 />
 
-                {password && !isPasswordValid && (
-                    <p className="error-text">
-                        숫자 + 영어 + 특수문자 포함 8자 이상
-                    </p>
-                )}
-
                 <input
                     type="password"
                     placeholder="비밀번호 확인 *"
                     value={confirmPw}
                     onChange={(e) => setConfirmPw(e.target.value)}
                 />
-
-                {confirmPw && !isPasswordSame && (
-                    <p className="error-text">비밀번호가 일치하지 않습니다.</p>
-                )}
 
                 <input
                     type="text"
@@ -105,32 +139,37 @@ function SignupPage() {
                     onChange={(e) => setName(e.target.value)}
                 />
 
+                <div className="address-row">
+                    <input
+                        type="text"
+                        placeholder="주소 *"
+                        value={address}
+                        readOnly
+                    />
+                    <button type="button" onClick={openAddress}>
+                        찾기
+                    </button>
+                </div>
+
                 <input
                     type="text"
-                    placeholder="주소 *"
-                    value={address}
-                    onChange={(e) => setAddress(e.target.value)}
+                    placeholder="상세주소"
+                    value={detailAddress}
+                    onChange={(e) => setDetailAddress(e.target.value)}
                 />
 
                 <input
                     type="number"
                     placeholder="나이 (1~100) *"
                     value={age}
-                    min="1"
-                    max="100"
-                    onChange={(e) => {
-                        const value = e.target.value;
-                        if (value === "" || Number(value) <= 100) {
-                            setAge(value);
-                        }
-                    }}
+                    onChange={(e) => setAge(e.target.value)}
                 />
 
                 <button onClick={handleSignup}>가입하기</button>
 
                 <div className="signup-links">
-                    <span onClick={() => navigate("/login")}>로그인으로 돌아가기</span>
-                    <span onClick={() => navigate("/")}>챗봇으로 돌아가기</span>
+                    <span onClick={() => navigate("/login")}>로그인</span>
+                    <span onClick={() => navigate("/")}>챗봇</span>
                 </div>
             </div>
         </div>

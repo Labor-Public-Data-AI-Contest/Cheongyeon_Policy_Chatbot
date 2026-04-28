@@ -1,20 +1,30 @@
 import { useState, useEffect, useRef } from "react";
 import api from "../api/axios";
+import { useAuth } from "../context/AuthContext";
 
 function ChatBox() {
+    const { isLogin } = useAuth();
+
     const [messages, setMessages] = useState([
         { text: "안녕하세요!", sender: "bot" }
     ]);
     const [input, setInput] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const chatEndRef = useRef(null);
 
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }, [messages]);
+    }, [messages, isLoading]);
+
+    useEffect(() => {
+        setMessages([
+            { text: "안녕하세요!", sender: "bot" }
+        ]);
+    }, [isLogin]);
 
     const sendMessage = async () => {
-        if (!input.trim()) return;
+        if (!input.trim() || isLoading) return;
 
         const userMessage = input;
 
@@ -24,15 +34,13 @@ function ChatBox() {
         ]);
 
         setInput("");
+        setIsLoading(true);
 
         try {
             let messageToAI = userMessage;
 
-            // 로그인 정보 가져오기
             try {
                 const userRes = await api.get("/api/user/me");
-
-                console.log("내 정보:", userRes.data);
 
                 messageToAI = `
 사용자 정보:
@@ -44,8 +52,6 @@ function ChatBox() {
 ${userMessage}
 `;
             } catch (error) {
-                console.log("비로그인 상태");
-
                 messageToAI = `
 사용자 정보:
 비로그인 상태
@@ -55,7 +61,6 @@ ${userMessage}
 `;
             }
 
-            // OpenAI 연결된 Spring API 호출
             const chatRes = await api.post("/api/chat", messageToAI, {
                 headers: {
                     "Content-Type": "text/plain"
@@ -80,6 +85,8 @@ ${userMessage}
                     sender: "bot"
                 }
             ]);
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -94,12 +101,20 @@ ${userMessage}
                         {msg.text}
                     </div>
                 ))}
+
+                {isLoading && (
+                    <div className="bot typing">
+                        답변 생성 중...
+                    </div>
+                )}
+
                 <div ref={chatEndRef}></div>
             </div>
 
             <div className="chat-footer">
                 <input
                     value={input}
+                    disabled={isLoading}
                     onChange={(e) => setInput(e.target.value)}
                     onKeyDown={(e) => {
                         if (e.key === "Enter" && !e.nativeEvent.isComposing) {
@@ -107,9 +122,11 @@ ${userMessage}
                             sendMessage();
                         }
                     }}
-                    placeholder="메시지를 입력하세요"
+                    placeholder={isLoading ? "답변을 기다리는 중..." : "메시지를 입력하세요"}
                 />
-                <button onClick={sendMessage}>전송</button>
+                <button onClick={sendMessage} disabled={isLoading}>
+                    {isLoading ? "대기중" : "전송"}
+                </button>
             </div>
         </>
     );

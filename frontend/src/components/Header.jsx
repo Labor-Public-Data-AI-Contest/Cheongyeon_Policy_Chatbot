@@ -1,19 +1,10 @@
 import "../styles/Header.css";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext"; 
+import { useAuth } from "../context/AuthContext";
 
 function Header({ dark, setDark }) {
     const navigate = useNavigate();
-    const { isLogin, logout } = useAuth(); 
-
-    const handleAuth = () => {
-        if (isLogin) {
-            logout(); 
-            navigate("/");
-        } else {
-            navigate("/login");
-        }
-    };
+    const { isLogin, logout } = useAuth();
 
     return (
         <div className="chat-header">
@@ -23,9 +14,34 @@ function Header({ dark, setDark }) {
             </span>
 
             <div className="header-right">
-                <button className="login-btn" onClick={handleAuth}>
-                    {isLogin ? "로그아웃" : "로그인"}
-                </button>
+
+                {isLogin ? (
+                    <>
+                        <button
+                            className="info-btn"
+                            onClick={() => navigate("/mypage")}
+                        >
+                            내정보
+                        </button>
+
+                        <button
+                            className="login-btn"
+                            onClick={() => {
+                                logout();
+                                navigate("/");
+                            }}
+                        >
+                            로그아웃
+                        </button>
+                    </>
+                ) : (
+                    <button
+                        className="login-btn"
+                        onClick={() => navigate("/login")}
+                    >
+                        로그인
+                    </button>
+                )}
 
                 <button
                     className="theme-toggle"
@@ -33,8 +49,8 @@ function Header({ dark, setDark }) {
                 >
                     {dark ? "☀️" : "🌙"}
                 </button>
-            </div>
 
+            </div>
         </div>
     );
 }

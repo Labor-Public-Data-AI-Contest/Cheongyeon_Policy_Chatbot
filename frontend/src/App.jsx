@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import ChatPage from "./pages/ChatPage";
 import LoginPage from "./pages/LoginPage.jsx";
 import SignupPage from "./pages/SignupPage";
+import MyPage from "./pages/MyPage";
+
 import "./App.css";
 
 function App() {
@@ -24,6 +26,7 @@ function App() {
           <Route path="/" element={<ChatPage dark={dark} setDark={setDark} />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/signup" element={<SignupPage />} />
+          <Route path="/mypage" element={<MyPage />} />
         </Routes>
       </BrowserRouter>
     </div>

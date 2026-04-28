@@ -26,6 +26,21 @@
   gap: 10px;
 }
 
+.info-btn {
+    padding: 8px 14px;
+    border-radius: 10px;
+    border: none;
+    background: #e2e8f0;
+    color: #111;
+    cursor: pointer;
+    font-size: 13px;
+    transition: all 0.2s ease;
+}
+
+.info-btn:hover {
+    background: #cbd5f5;
+}
+
 /* 로그인 버튼 */
 .login-btn {
   padding: 6px 12px;

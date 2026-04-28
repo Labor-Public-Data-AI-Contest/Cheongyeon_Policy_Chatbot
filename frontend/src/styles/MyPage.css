@@ -1,0 +1,129 @@
+/* 전체 페이지 */
+.mypage {
+    width: 100vw;
+    min-height: 100vh;
+    background: var(--bg);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 카드 */
+.mypage-card {
+    width: 380px;
+    padding: 36px 28px;
+    background: var(--card);
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+    backdrop-filter: blur(10px);
+
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* 제목 */
+.mypage-card h2 {
+    text-align: center;
+    color: var(--text);
+    margin-bottom: 10px;
+}
+
+/* 정보 영역 */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 14px;
+    border-radius: 10px;
+    background: var(--sub);
+}
+
+/* 라벨 */
+.info-label {
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* 값 */
+.info-value {
+    font-weight: 500;
+    color: var(--text);
+}
+
+/* 버튼 영역 */
+.mypage-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+/* 공통 버튼 */
+.mypage-actions button {
+    flex: 1;
+    padding: 12px;
+    border-radius: 10px;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+/* 홈 버튼 */
+.home-btn {
+    background: #e2e8f0;
+    color: #111;
+}
+
+.home-btn:hover {
+    background: #cbd5f5;
+}
+
+.update-btn {
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    color: white;
+}
+
+.update-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(99, 102, 241, 0.3);
+}
+
+.address-edit-row {
+    align-items: flex-start;
+}
+
+.mypage-address-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    flex: 1;
+}
+
+.mypage-address-row {
+    display: flex;
+    gap: 8px;
+}
+
+.mypage-address-row input {
+    flex: 1;
+}
+
+.mypage-address-row button {
+    width: 70px;
+    border-radius: 8px;
+    border: none;
+    background: linear-gradient(135deg, #6366f1, #818cf8);
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.mypage-address-wrap input {
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    background: var(--card);
+    color: var(--text);
+    outline: none;
+}
