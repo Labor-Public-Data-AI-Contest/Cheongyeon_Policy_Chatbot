@@ -26,24 +26,57 @@ function ChatBox() {
         setInput("");
 
         try {
-            const res = await api.get("/api/user/me");
+            let messageToAI = userMessage;
 
-            console.log("내 정보:", res.data);
+            // 로그인 정보 가져오기
+            try {
+                const userRes = await api.get("/api/user/me");
+
+                console.log("내 정보:", userRes.data);
+
+                messageToAI = `
+사용자 정보:
+이름: ${userRes.data.name}
+주소: ${userRes.data.address}
+나이: ${userRes.data.age}
+
+사용자 질문:
+${userMessage}
+`;
+            } catch (error) {
+                console.log("비로그인 상태");
+
+                messageToAI = `
+사용자 정보:
+비로그인 상태
+
+사용자 질문:
+${userMessage}
+`;
+            }
+
+            // OpenAI 연결된 Spring API 호출
+            const chatRes = await api.post("/api/chat", messageToAI, {
+                headers: {
+                    "Content-Type": "text/plain"
+                }
+            });
 
             setMessages(prev => [
                 ...prev,
                 {
-                    text: `안녕하세요 ${res.data.name}님! 현재 ${res.data.address} 거주, ${res.data.age}세로 확인됐어요.`,
+                    text: chatRes.data,
                     sender: "bot"
                 }
             ]);
+
         } catch (error) {
-            console.log("비로그인 상태");
+            console.error("채팅 오류:", error);
 
             setMessages(prev => [
                 ...prev,
                 {
-                    text: "로그인하면 나이, 주소 정보를 바탕으로 더 맞춤형 답변을 받을 수 있어요.",
+                    text: "답변을 가져오는 중 오류가 발생했어요.",
                     sender: "bot"
                 }
             ]);

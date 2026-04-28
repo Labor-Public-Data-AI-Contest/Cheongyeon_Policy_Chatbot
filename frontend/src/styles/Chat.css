@@ -96,6 +96,7 @@ body {
 }
 
 .bot {
+    white-space: pre-line;
     margin-right: auto;
     background: var(--sub);
     color: var(--text);
