@@ -25,6 +25,13 @@ function ChatBox() {
     const chatEndRef = useRef(null);
     const prevStorageKeyRef = useRef(storageKey);
 
+    const clearChat = () => {
+    if (!window.confirm("대화를 모두 삭제할까요?")) return;
+
+    setMessages(initialMessages);
+    localStorage.setItem(storageKey, JSON.stringify(initialMessages));
+};
+
     useEffect(() => {
         chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isLoading]);
@@ -67,22 +74,22 @@ function ChatBox() {
                 const userRes = await api.get("/api/user/me");
 
                 messageToAI = `
-사용자 정보:
-이름: ${userRes.data.name}
-주소: ${userRes.data.address}
-나이: ${userRes.data.age}
+                                사용자 정보:
+                                이름: ${userRes.data.name}
+                                주소: ${userRes.data.address}
+                                나이: ${userRes.data.age}
 
-사용자 질문:
-${userMessage}
-`;
+                                사용자 질문:
+                                ${userMessage}
+                                `;
             } catch (error) {
                 messageToAI = `
-사용자 정보:
-비로그인 상태
+                                사용자 정보:
+                                비로그인 상태
 
-사용자 질문:
-${userMessage}
-`;
+                                사용자 질문:
+                                ${userMessage}
+                                `;
             }
 
             const chatRes = await api.post("/api/chat", messageToAI, {
@@ -192,6 +199,9 @@ ${userMessage}
 
                 <button onClick={sendMessage} disabled={isLoading}>
                     {isLoading ? "대기중" : "전송"}
+                </button>
+                <button onClick={clearChat} className="clear-btn">
+                    대화 초기화
                 </button>
             </div>
         </>

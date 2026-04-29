@@ -224,3 +224,23 @@ body {
   background: #6366f1;
   color: white;
 }
+
+.clear-btn {
+  margin-left: 8px;
+  padding: 10px 12px;
+
+  background: #f1f5f9;
+  color: #475569;
+
+  border: none;
+  border-radius: 10px;
+
+  cursor: pointer;
+  font-size: 13px;
+
+  transition: 0.2s;
+}
+
+.clear-btn:hover {
+  background: #e2e8f0;
+}
