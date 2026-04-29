@@ -24,6 +24,11 @@ public class AuthController {
         userService.signup(dto);
         return "회원가입 성공";
     }
+    
+    @GetMapping("/check-id")
+    public boolean checkId(@RequestParam String userid) {
+        return userService.existsByUserid(userid);
+    }
 
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDto dto) {

@@ -60,4 +60,8 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    public boolean existsByUserid(String userid) {
+        return userRepository.existsByUserid(userid);
+    }
+
 }
