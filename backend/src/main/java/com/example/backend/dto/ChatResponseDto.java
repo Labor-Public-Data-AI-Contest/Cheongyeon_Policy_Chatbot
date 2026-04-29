@@ -8,7 +8,8 @@ import java.util.List;
 @Getter
 @Setter
 public class ChatResponseDto {
-    private String type; // "text" or "policies"
+    private String type;
     private String text;
-    private List<PolicyCardDto> policies;
+    private List<PolicyDto> policies;
+    private List<String> followUp;
 }

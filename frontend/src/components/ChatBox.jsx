@@ -97,7 +97,8 @@ ${userMessage}
                     sender: "bot",
                     type: chatRes.data.type,
                     text: chatRes.data.text,
-                    policies: chatRes.data.policies || []
+                    policies: chatRes.data.policies || [],
+                    followUp: chatRes.data.followUp || []
                 }
             ]);
 
@@ -140,6 +141,16 @@ ${userMessage}
                                             <span>지원: {policy.amount}</span>
                                             <span>마감: {policy.deadline}</span>
                                         </div>
+                                        {policy.url && (
+                                            <a
+                                                href={policy.url}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="policy-link"
+                                            >
+                                                신청하러 가기 →
+                                            </a>
+                                        )}
                                     </div>
                                 ))}
                             </div>
