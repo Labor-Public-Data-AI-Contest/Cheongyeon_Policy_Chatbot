@@ -29,15 +29,23 @@ export default function Signup() {
 
     const [agree, setAgree] = useState(false);
 
+    const [userid, setUserid] = useState("");
+    const [userpassword, setUserpassword] = useState("");
+    const [passwordCheck, setPasswordCheck] = useState("");
+    const [idChecked, setIdChecked] = useState(false);
+    const [idMessage, setIdMessage] = useState("");
+
     const filteredSido = inputSido
         ? sidoList.filter(item => item.startsWith(inputSido))
         : [];
 
     const subList = selectedSido ? regionMap[selectedSido] || [] : [];
 
-    const filteredGu = inputGu
-        ? subList.filter(item => item.startsWith(inputGu))
-        : subList;
+    const filteredGu = selectedSido
+        ? inputGu
+            ? subList.filter(item => item.startsWith(inputGu))
+            : subList
+        : [];
 
     const onChangeDate = (event, selectedDate) => {
         setShowDatePicker(false);
@@ -49,15 +57,86 @@ export default function Signup() {
             const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
             const day = String(selectedDate.getDate()).padStart(2, "0");
 
-            setBirth(`${year}.${month}.${day}`);
+            // 백엔드 LocalDate.parse()용 형식
+            setBirth(`${year}-${month}-${day}`);
         }
     };
 
-    const [userid, setUserid] = useState("");
-    const [userpassword, setUserpassword] = useState("");
-    const [passwordCheck, setPasswordCheck] = useState("");
-    const [idChecked, setIdChecked] = useState(false);
-    const [idMessage, setIdMessage] = useState("");
+    const handleSignup = async () => {
+        if (!userid.trim()) {
+            alert("아이디를 입력해주세요.");
+            return;
+        }
+
+        if (!idChecked) {
+            alert("아이디 중복확인을 해주세요.");
+            return;
+        }
+
+        if (!userpassword.trim()) {
+            alert("비밀번호를 입력해주세요.");
+            return;
+        }
+
+        if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(userpassword)) {
+            alert("비밀번호는 영문과 숫자를 포함해 8자리 이상이어야 합니다.");
+            return;
+        }
+
+        if (userpassword !== passwordCheck) {
+            alert("비밀번호가 일치하지 않습니다.");
+            return;
+        }
+
+        if (!name.trim()) {
+            alert("이름을 입력해주세요.");
+            return;
+        }
+
+        if (!birth.trim()) {
+            alert("생년월일을 선택해주세요.");
+            return;
+        }
+
+        if (!selectedSido || !selectedGu) {
+            alert("거주 지역을 선택해주세요.");
+            return;
+        }
+
+        if (!agree) {
+            alert("개인정보 수집 및 이용에 동의해주세요.");
+            return;
+        }
+
+        try {
+            const signupData = {
+                userid,
+                userpassword,
+                name,
+                birth,
+                address: `${selectedSido} ${selectedGu}`
+            };
+
+            console.log("회원가입 요청 데이터:", signupData);
+
+            await api.post("/api/auth/signup", signupData);
+
+            alert("회원가입 성공");
+            router.replace("/login");
+        } catch (e) {
+            console.log("회원가입 실패:", e.response?.data || e.message);
+            alert(e.response?.data || "회원가입 실패");
+        }
+    };
+
+    const isSignupDisabled =
+        !agree ||
+        !idChecked ||
+        !birth ||
+        !selectedSido ||
+        !selectedGu ||
+        !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(userpassword) ||
+        userpassword !== passwordCheck;
 
     return (
         <View style={{ flex: 1, backgroundColor: "white" }}>
@@ -111,8 +190,8 @@ export default function Signup() {
                             }
 
                             try {
-                                const res = await fetch(`http://localhost:8080/api/auth/check-id?userid=${userid}`);
-                                const exists = await res.json();
+                                const res = await api.get(`/api/auth/check-id?userid=${userid}`);
+                                const exists = res.data;
 
                                 if (exists) {
                                     setIdChecked(false);
@@ -192,7 +271,7 @@ export default function Signup() {
                     <TextInput
                         value={birth}
                         onChangeText={setBirth}
-                        placeholder="1999.01.01"
+                        placeholder="1999-01-01"
                         style={inputStyle}
                     />
                 ) : (
@@ -325,24 +404,13 @@ export default function Signup() {
                     </Text>
                 </TouchableOpacity>
 
-
                 <TouchableOpacity
-                    disabled={
-                        !agree ||
-                        !idChecked ||
-                        !/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(userpassword) ||
-                        userpassword !== passwordCheck
-                    }
+                    disabled={isSignupDisabled}
+                    onPress={handleSignup}
                     style={{
                         height: 56,
                         borderRadius: 14,
-                        backgroundColor:
-                            agree &&
-                                idChecked &&
-                                /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(userpassword) &&
-                                userpassword === passwordCheck
-                                ? "#2563eb"
-                                : "#cbd5e1",
+                        backgroundColor: isSignupDisabled ? "#cbd5e1" : "#2563eb",
                         justifyContent: "center",
                         alignItems: "center",
                         shadowColor: "#2563eb",
@@ -374,6 +442,7 @@ const inputStyle = {
     borderColor: "#e5e7eb",
     paddingHorizontal: 16,
     marginBottom: 8,
+    color: "#111",
 };
 
 const dateInputStyle = {

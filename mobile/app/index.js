@@ -2,6 +2,7 @@ import { ScrollView, View, TextInput, TouchableOpacity, Text } from "react-nativ
 import Header from "../components/Header";
 import PolicyCard from "../components/PolicyCard";
 import Category from "../components/Category";
+import { router } from "expo-router";
 
 export default function App() {
   return (
@@ -65,6 +66,7 @@ export default function App() {
       </ScrollView>
 
       <TouchableOpacity
+        onPress={() => router.push("/chat")}
         style={{
           position: "absolute",
           right: 24,
@@ -75,6 +77,10 @@ export default function App() {
           backgroundColor: "#4f46e5",
           justifyContent: "center",
           alignItems: "center",
+          shadowColor: "#4f46e5",
+          shadowOpacity: 0.3,
+          shadowRadius: 10,
+          elevation: 6
         }}
       >
         <Text style={{ fontSize: 26, color: "white" }}>💬</Text>

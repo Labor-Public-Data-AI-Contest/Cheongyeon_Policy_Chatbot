@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 
 export default function PolicyCard({ title, desc, tag1, tag2, views, active }) {
   return (
+    
     <View style={{
       backgroundColor: "white",
       borderRadius: 18,

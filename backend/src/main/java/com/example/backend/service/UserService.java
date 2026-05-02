@@ -8,6 +8,9 @@ import com.example.backend.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
 
 @Service
 @RequiredArgsConstructor
@@ -22,12 +25,16 @@ public class UserService {
             throw new IllegalArgumentException("이미 존재하는 아이디입니다.");
         }
 
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate birthDate = LocalDate.parse(dto.getBirth(), formatter);
+        int age = Period.between(birthDate, LocalDate.now()).getYears();
+
         User user = new User();
         user.setUserid(dto.getUserid());
         user.setUserpassword(passwordEncoder.encode(dto.getUserpassword()));
         user.setName(dto.getName());
         user.setAddress(dto.getAddress());
-        user.setAge(dto.getAge());
+        user.setAge(age);
 
         userRepository.save(user);
     }
@@ -46,7 +53,7 @@ public class UserService {
 
     public User findByUserid(String userid) {
         return userRepository.findByUserid(userid)
-            .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("사용자를 찾을 수 없습니다."));
     }
 
     public User updateUser(String userid, UserUpdateRequestDto dto) {
