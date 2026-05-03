@@ -1,5 +1,7 @@
 package com.example.backend.entity;
 
+import java.time.LocalDate;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -23,6 +25,8 @@ public class User {
     private String name;
 
     private String address;
+
+    private LocalDate birth;
 
     private int age;
 }

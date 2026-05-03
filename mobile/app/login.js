@@ -3,20 +3,23 @@ import { View, Text, TextInput, TouchableOpacity } from "react-native";
 import { router } from "expo-router";
 import api from "../api/api";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useToast } from "../context/ToastContext";
 
 export default function Login() {
   const [autoLogin, setAutoLogin] = useState(true);
   const [userid, setUserid] = useState("");
   const [password, setPassword] = useState("");
 
+  const { showToast } = useToast();
+
   const handleLogin = async () => {
     if (!userid.trim()) {
-      alert("아이디를 입력해주세요.");
+      showToast("아이디를 입력해주세요.", "error");
       return;
     }
 
     if (!password.trim()) {
-      alert("비밀번호를 입력해주세요.");
+      showToast("비밀번호를 입력해주세요.", "error");
       return;
     }
 
@@ -32,13 +35,18 @@ export default function Login() {
       await AsyncStorage.setItem("userid", String(res.data.userid));
       await AsyncStorage.setItem("name", String(res.data.name));
 
-      router.replace("/");
+      showToast("로그인 되었어요.");
+
+      setTimeout(() => {
+        router.replace("/");
+      }, 700);
+
     } catch (e) {
       console.log("로그인 에러 전체:", e);
       console.log("로그인 에러 메시지:", e.message);
       console.log("서버 응답:", e.response?.data);
 
-      alert(e.response?.data || e.message || "로그인 처리 중 오류가 발생했습니다.");
+      showToast("아이디 또는 비밀번호가 잘못되었습니다.", "error");
     }
   };
 

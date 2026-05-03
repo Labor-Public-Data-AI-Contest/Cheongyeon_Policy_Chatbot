@@ -35,6 +35,10 @@ public class UserController {
         dto.setAddress(user.getAddress());
         dto.setAge(user.getAge());
 
+        if (user.getBirth() != null) {
+            dto.setBirth(user.getBirth().toString());
+        }
+
         return dto;
     }
 

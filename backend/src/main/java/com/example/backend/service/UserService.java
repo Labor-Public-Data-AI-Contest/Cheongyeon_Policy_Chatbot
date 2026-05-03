@@ -34,6 +34,7 @@ public class UserService {
         user.setUserpassword(passwordEncoder.encode(dto.getUserpassword()));
         user.setName(dto.getName());
         user.setAddress(dto.getAddress());
+        user.setBirth(birthDate);
         user.setAge(age);
 
         userRepository.save(user);
@@ -62,7 +63,14 @@ public class UserService {
 
         user.setName(dto.getName());
         user.setAddress(dto.getAddress());
-        user.setAge(dto.getAge());
+
+        if (dto.getBirth() != null && !dto.getBirth().isBlank()) {
+            LocalDate birthDate = LocalDate.parse(dto.getBirth());
+            int age = Period.between(birthDate, LocalDate.now()).getYears();
+
+            user.setBirth(birthDate);
+            user.setAge(age);
+        }
 
         return userRepository.save(user);
     }

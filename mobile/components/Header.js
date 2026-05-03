@@ -1,8 +1,7 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { View, Text, TouchableOpacity } from "react-native";
 import { router, useFocusEffect } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { useCallback } from "react";
 
 export default function Header() {
   const [isLogin, setIsLogin] = useState(false);
@@ -21,13 +20,6 @@ export default function Header() {
       checkLogin();
     }, [])
   );
-
-  const logout = async () => {
-    await AsyncStorage.removeItem("token");
-    setIsLogin(false);
-    alert("로그아웃 완료");
-    router.replace("/");
-  };
 
   return (
     <View style={{
@@ -52,20 +44,20 @@ export default function Header() {
         </Text>
       </View>
 
-      <View style={{ flexDirection: "row", gap: 5 }}>
-        <Text style={{ fontSize: 20, marginRight: 14 }}>🔔</Text>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+        <Text style={{ fontSize: 20 }}>🔔</Text>
 
         {isLogin ? (
           <TouchableOpacity
             style={{ paddingHorizontal: 6 }}
-            onPress={logout}
+            onPress={() => router.push("/mypage")}
           >
             <Text style={{
-              color: "#2563eb" ,
+              color: "#2563eb",
               fontWeight: "700",
               fontSize: 15
             }}>
-              로그아웃
+              마이페이지
             </Text>
           </TouchableOpacity>
         ) : (

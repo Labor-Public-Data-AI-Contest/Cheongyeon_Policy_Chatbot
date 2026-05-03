@@ -11,10 +11,13 @@ import { router } from "expo-router";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import regionMap from "../data/region.json";
 import api from "../api/api";
+import { useToast } from "../context/ToastContext";
 
 const sidoList = Object.keys(regionMap);
 
 export default function Signup() {
+    const { showToast } = useToast();
+
     const [name, setName] = useState("");
 
     const [birth, setBirth] = useState("");
@@ -28,6 +31,7 @@ export default function Signup() {
     const [selectedGu, setSelectedGu] = useState("");
 
     const [agree, setAgree] = useState(false);
+    const [showSidoList, setShowSidoList] = useState(false);
 
     const [userid, setUserid] = useState("");
     const [userpassword, setUserpassword] = useState("");
@@ -35,8 +39,10 @@ export default function Signup() {
     const [idChecked, setIdChecked] = useState(false);
     const [idMessage, setIdMessage] = useState("");
 
-    const filteredSido = inputSido
-        ? sidoList.filter(item => item.startsWith(inputSido))
+    const filteredSido = showSidoList
+        ? inputSido
+            ? sidoList.filter(item => item.startsWith(inputSido))
+            : sidoList
         : [];
 
     const subList = selectedSido ? regionMap[selectedSido] || [] : [];
@@ -57,54 +63,53 @@ export default function Signup() {
             const month = String(selectedDate.getMonth() + 1).padStart(2, "0");
             const day = String(selectedDate.getDate()).padStart(2, "0");
 
-            // 백엔드 LocalDate.parse()용 형식
             setBirth(`${year}-${month}-${day}`);
         }
     };
 
     const handleSignup = async () => {
         if (!userid.trim()) {
-            alert("아이디를 입력해주세요.");
+            showToast("아이디를 입력해주세요.", "error");
             return;
         }
 
         if (!idChecked) {
-            alert("아이디 중복확인을 해주세요.");
+            showToast("아이디 중복확인을 해주세요.", "error");
             return;
         }
 
         if (!userpassword.trim()) {
-            alert("비밀번호를 입력해주세요.");
+            showToast("비밀번호를 입력해주세요.", "error");
             return;
         }
 
         if (!/^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/.test(userpassword)) {
-            alert("비밀번호는 영문과 숫자를 포함해 8자리 이상이어야 합니다.");
+            showToast("비밀번호는 영문과 숫자를 포함해 8자리 이상이어야 합니다.", "error");
             return;
         }
 
         if (userpassword !== passwordCheck) {
-            alert("비밀번호가 일치하지 않습니다.");
+            showToast("비밀번호가 일치하지 않습니다.", "error");
             return;
         }
 
         if (!name.trim()) {
-            alert("이름을 입력해주세요.");
+            showToast("이름을 입력해주세요.", "error");
             return;
         }
 
         if (!birth.trim()) {
-            alert("생년월일을 선택해주세요.");
+            showToast("생년월일을 선택해주세요.", "error");
             return;
         }
 
         if (!selectedSido || !selectedGu) {
-            alert("거주 지역을 선택해주세요.");
+            showToast("거주 지역을 선택해주세요.", "error");
             return;
         }
 
         if (!agree) {
-            alert("개인정보 수집 및 이용에 동의해주세요.");
+            showToast("개인정보 수집 및 이용에 동의해주세요.", "error");
             return;
         }
 
@@ -121,11 +126,14 @@ export default function Signup() {
 
             await api.post("/api/auth/signup", signupData);
 
-            alert("회원가입 성공");
-            router.replace("/login");
+            showToast("회원가입이 완료되었어요");
+
+            setTimeout(() => {
+                router.replace("/login");
+            }, 800);
         } catch (e) {
             console.log("회원가입 실패:", e.response?.data || e.message);
-            alert(e.response?.data || "회원가입 실패");
+            showToast(e.response?.data || "회원가입 실패", "error");
         }
     };
 
@@ -303,6 +311,7 @@ export default function Signup() {
                 <View style={{ flexDirection: "row", gap: 8 }}>
                     <TextInput
                         value={inputSido}
+                        onFocus={() => setShowSidoList(true)}
                         onChangeText={(text) => {
                             setInputSido(text);
                             setSelectedSido("");
@@ -339,7 +348,7 @@ export default function Signup() {
                     />
                 </View>
 
-                {filteredSido.length > 0 && !selectedSido && (
+                {filteredSido.length > 0  && showSidoList && !selectedSido && (
                     <View style={dropdownStyle}>
                         {filteredSido.map(item => (
                             <TouchableOpacity
@@ -349,6 +358,7 @@ export default function Signup() {
                                     setSelectedSido(item);
                                     setInputGu("");
                                     setSelectedGu("");
+                                    setShowSidoList(false);
                                 }}
                                 style={dropdownItemStyle}
                             >
