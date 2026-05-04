@@ -19,7 +19,9 @@ const screenWidth = Dimensions.get("window").width;
 
 export default function App() {
   const [policies, setPolicies] = useState([]);
+  const [unemployedPolicies, setUnemployedPolicies] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [unemployedLoading, setUnemployedLoading] = useState(true);
   const [keyword, setKeyword] = useState("");
 
   const scrollRef = useRef(null);
@@ -27,6 +29,7 @@ export default function App() {
 
   useEffect(() => {
     fetchPolicies();
+    fetchUnemployedPolicies();
   }, []);
 
   useEffect(() => {
@@ -54,6 +57,19 @@ export default function App() {
       setLoading(false);
     }
   };
+
+  const fetchUnemployedPolicies = async () => {
+    try {
+      const res = await api.get("/api/policies/recommend");
+
+      setUnemployedPolicies(res.data);
+    } catch (error) {
+      console.log("추천 정책 불러오기 실패:", error);
+    } finally {
+      setUnemployedLoading(false);
+    }
+  };
+
 
   const handleSearch = () => {
     if (!keyword.trim()) return;
@@ -165,6 +181,51 @@ export default function App() {
             <Category icon="🏠" title="주거" />
             <Category icon="🎓" title="교육" />
             <Category icon="🧡" title="복지/문화" />
+          </View>
+
+          <View style={{ marginTop: 42 }}>
+            <Text style={{ fontSize: 20, fontWeight: "900", lineHeight: 28 }}>
+              <Text style={{ color: "#2563eb" }}>미취업자</Text>들을 위한{"\n"}
+              맞춤 정책이에요! 🎯
+            </Text>
+
+            <View style={{ marginTop: 14 }}>
+              {unemployedLoading ? (
+                <ActivityIndicator size="large" />
+              ) : unemployedPolicies.length === 0 ? (
+                <Text style={{ color: "#64748b", fontWeight: "600" }}>
+                  추천 정책이 없습니다.
+                </Text>
+              ) : (
+                <ScrollView
+                  horizontal
+                  showsHorizontalScrollIndicator={false}
+                >
+                  {unemployedPolicies.map((policy, index) => (
+                    <View
+                      key={policy.id}
+                      style={{
+                        width: screenWidth * 0.72,
+                        marginRight: 14,
+                      }}
+                    >
+                      <PolicyCard
+                        title={policy.title}
+                        desc={policy.desc}
+                        tag1={policy.category}
+                        tag2={policy.region}
+                        views={policy.views?.toLocaleString() ?? "0"}
+                        active={index === 0}
+                        fixedHeight
+                        onPress={() =>
+                          router.push(`/policy-detail?id=${policy.id}`)
+                        }
+                      />
+                    </View>
+                  ))}
+                </ScrollView>
+              )}
+            </View>
           </View>
         </View>
       </ScrollView>

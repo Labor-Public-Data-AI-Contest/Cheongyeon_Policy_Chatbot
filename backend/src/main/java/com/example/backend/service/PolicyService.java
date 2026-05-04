@@ -47,4 +47,12 @@ public class PolicyService {
         return policyRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("정책을 찾을 수 없습니다."));
     }
+
+    public List<PolicyCardResponseDto> getRandomByKeywords() {
+        return policyRepository
+                .findRandomByMultipleKeywords("인턴", "장기미취업청년", "교육지원")
+                .stream()
+                .map(PolicyCardResponseDto::new)
+                .toList();
+    }
 }

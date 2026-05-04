@@ -46,4 +46,9 @@ public class PolicyController {
     public Policy getPolicyDetail(@PathVariable Long id) {
         return policyService.getPolicyDetail(id);
     }
+
+    @GetMapping("/recommend")
+    public List<PolicyCardResponseDto> getRecommendedPolicies() {
+        return policyService.getRandomByKeywords();
+    }
 }
