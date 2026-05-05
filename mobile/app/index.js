@@ -23,6 +23,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [unemployedLoading, setUnemployedLoading] = useState(true);
   const [keyword, setKeyword] = useState("");
+  
 
   const scrollRef = useRef(null);
   const currentIndex = useRef(0);
@@ -69,6 +70,25 @@ export default function App() {
       setUnemployedLoading(false);
     }
   };
+  const categories = [
+    "취업",
+    "창업",
+    "청년참여",
+    "취약계층 및 금융지원",
+    "전월세 및 주거급여 지원",
+    "문화활동 및 생활지원",
+    "정책인프라구축",
+    "미래역량강화",
+    "주택 및 거주지",
+    "건강",
+    "예술인지원",
+    "기숙사",
+    "온·오프라인교육",
+    "권익보호",
+    "재직자",
+    "교육비지원",
+    "청년국제교류",
+  ];
 
 
   const handleSearch = () => {
@@ -169,19 +189,49 @@ export default function App() {
               </ScrollView>
             )}
           </View>
+          <Text style={{ marginTop: 34, fontSize: 18, fontWeight: "900" }}>
+            관심 분야별 정책 보기
+          </Text>
 
-          <View
-            style={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              marginTop: 38,
-            }}
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            style={{ marginTop: 38 }}
+            contentContainerStyle={{ paddingRight: 22 }}
           >
-            <Category icon="💼" title="일자리" />
-            <Category icon="🏠" title="주거" />
-            <Category icon="🎓" title="교육" />
-            <Category icon="🧡" title="복지/문화" />
-          </View>
+            {categories.map((cat, index) => (
+              <TouchableOpacity
+                key={index}
+                activeOpacity={0.8}
+                onPress={() =>
+                  router.push(`/policies?category=${encodeURIComponent(cat)}`)
+                }
+                style={{
+                  marginRight: 10,
+                  paddingHorizontal: 14,
+                  paddingVertical: 9,
+                  backgroundColor: "white",
+                  borderRadius: 16,
+                  borderWidth: 1,
+                  borderColor: "#dbeafe",
+                  shadowColor: "#000",
+                  shadowOpacity: 0.04,
+                  shadowRadius: 6,
+                  elevation: 1,
+                }}
+              >
+                <Text
+                  style={{
+                    color: "#2563eb",
+                    fontSize: 14,
+                    fontWeight: "800",
+                  }}
+                >
+                  {cat}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
 
           <View style={{ marginTop: 42 }}>
             <Text style={{ fontSize: 20, fontWeight: "900", lineHeight: 28 }}>
@@ -220,7 +270,7 @@ export default function App() {
                         onPress={() =>
                           router.push(`/policy-detail?id=${policy.id}`)
                         }
-                      />
+                          />
                     </View>
                   ))}
                 </ScrollView>

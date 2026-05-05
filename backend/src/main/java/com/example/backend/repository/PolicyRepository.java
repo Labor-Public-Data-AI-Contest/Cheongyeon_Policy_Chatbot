@@ -24,6 +24,8 @@ public interface PolicyRepository extends JpaRepository<Policy, Long> {
 
     Page<Policy> findByTitleContainingIgnoreCase(String keyword, Pageable pageable);
 
+    Page<Policy> findByCategoryContainingIgnoreCase(String keyword, Pageable pageable);
+
     @Query(value = """
                 SELECT * FROM policies
                 WHERE keywords LIKE CONCAT('%', :k1, '%')

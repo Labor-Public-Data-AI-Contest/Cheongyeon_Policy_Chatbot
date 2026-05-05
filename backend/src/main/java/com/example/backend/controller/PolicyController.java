@@ -42,6 +42,14 @@ public class PolicyController {
         return policyService.searchPolicies(keyword, page, size);
     }
 
+    @GetMapping("/category")
+    public Page<PolicyCardResponseDto> getByCategory(
+            @RequestParam String category,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return policyService.getByCategory(category, page, size);
+    }
+
     @GetMapping("/{id}")
     public Policy getPolicyDetail(@PathVariable Long id) {
         return policyService.getPolicyDetail(id);
@@ -51,4 +59,6 @@ public class PolicyController {
     public List<PolicyCardResponseDto> getRecommendedPolicies() {
         return policyService.getRandomByKeywords();
     }
+
+    
 }

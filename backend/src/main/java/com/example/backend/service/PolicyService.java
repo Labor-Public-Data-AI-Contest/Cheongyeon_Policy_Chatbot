@@ -55,4 +55,10 @@ public class PolicyService {
                 .map(PolicyCardResponseDto::new)
                 .toList();
     }
+
+    public Page<PolicyCardResponseDto> getByCategory(String category, int page, int size) {
+        return policyRepository
+                .findByCategoryContainingIgnoreCase(category, PageRequest.of(page, size))
+                .map(PolicyCardResponseDto::new);
+    }
 }
