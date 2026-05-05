@@ -38,4 +38,5 @@ public interface PolicyRepository extends JpaRepository<Policy, Long> {
             @Param("k1") String k1,
             @Param("k2") String k2,
             @Param("k3") String k3);
+
 }

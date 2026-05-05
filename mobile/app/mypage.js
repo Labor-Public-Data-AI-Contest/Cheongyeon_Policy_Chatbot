@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { View, Text, TouchableOpacity, ScrollView } from "react-native";
+import { View, Text, TouchableOpacity, ScrollView, ActivityIndicator } from "react-native";
 import { router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "../api/api";
@@ -8,36 +8,21 @@ import { useToast } from "../context/ToastContext";
 export default function MyPage() {
     const [user, setUser] = useState(null);
     const { showToast } = useToast();
+    const [favoritePolicies, setFavoritePolicies] = useState([]);
+    const [favoriteLoading, setFavoriteLoading] = useState(true);
 
-    const favoritePolicies = [
-        {
-            title: "청년도약계좌",
-            category: "금융지원",
-            desc: "5년 만기 시 최대 5,000만원 목돈 마련 지원",
-            icon: "💳",
-            color: "#eff6ff",
-            tagColor: "#dbeafe",
-            textColor: "#2563eb",
-        },
-        {
-            title: "청년 월세 특별지원",
-            category: "주거복지",
-            desc: "월 최대 20만원, 최장 12개월간 월세 지원",
-            icon: "🏠",
-            color: "#fff7ed",
-            tagColor: "#ffedd5",
-            textColor: "#f97316",
-        },
-        {
-            title: "서울 영테크 자산형성",
-            category: "취업지원",
-            desc: "청년 맞춤형 재무 상담 및 교육 제공",
-            icon: "💼",
-            color: "#ecfdf5",
-            tagColor: "#dcfce7",
-            textColor: "#22c55e",
-        },
-    ];
+    const getFavoritePolicies = async () => {
+        try {
+            const res = await api.get("/api/favorites/me");
+            setFavoritePolicies(res.data);
+        } catch (e) {
+            console.log("찜한 정책 조회 실패:", e.response?.data || e.message);
+        } finally {
+            setFavoriteLoading(false);
+        }
+    };
+
+
 
     const getMyInfo = async () => {
         try {
@@ -76,6 +61,8 @@ export default function MyPage() {
 
     useEffect(() => {
         getMyInfo();
+        getFavoritePolicies();
+
     }, []);
 
     return (
@@ -89,6 +76,17 @@ export default function MyPage() {
                         alignItems: "center",
                         marginBottom: 30
                     }}>
+                        <TouchableOpacity
+                            onPress={() => {
+                                if (router.canGoBack()) {
+                                    router.back();
+                                } else {
+                                    router.replace("/");
+                                }
+                            }}
+                        >
+                            <Text style={{ fontSize: 26 }}>‹</Text>
+                        </TouchableOpacity>
                         <Text style={{ fontSize: 24, fontWeight: "900", color: "#111827" }}>
                             마이페이지
                         </Text>
@@ -156,80 +154,89 @@ export default function MyPage() {
                             내가 찜한 정책
                         </Text>
 
-                        <TouchableOpacity>
+                        <TouchableOpacity onPress={() => router.push("/favorites")}>
                             <Text style={{ color: "#94a3b8", fontWeight: "700" }}>
                                 전체보기
                             </Text>
                         </TouchableOpacity>
                     </View>
 
-                    {favoritePolicies.map((policy, index) => (
-                        <View
-                            key={index}
-                            style={{
-                                backgroundColor: "white",
-                                borderRadius: 18,
-                                padding: 18,
-                                marginBottom: 16,
-                                flexDirection: "row",
-                                alignItems: "center",
-                                shadowColor: "#000",
-                                shadowOpacity: 0.05,
-                                shadowRadius: 8,
-                                elevation: 2,
-                                borderWidth: 1,
-                                borderColor: "#e5e7eb"
-                            }}
-                        >
-                            <View style={{
-                                width: 54,
-                                height: 54,
-                                borderRadius: 14,
-                                backgroundColor: policy.color,
-                                justifyContent: "center",
-                                alignItems: "center",
-                                marginRight: 16
-                            }}>
-                                <Text style={{ fontSize: 24 }}>{policy.icon}</Text>
-                            </View>
-
-                            <View style={{ flex: 1 }}>
+                    {favoriteLoading ? (
+                        <ActivityIndicator size="large" />
+                    ) : favoritePolicies.length === 0 ? (
+                        <Text style={{ color: "#64748b", fontWeight: "700" }}>
+                            찜한 정책이 없습니다.
+                        </Text>
+                    ) : (
+                        favoritePolicies.slice(0, 5).map((policy) => (
+                            <TouchableOpacity
+                                key={policy.id}
+                                onPress={() => router.push(`/policy-detail?id=${policy.id}`)}
+                                style={{
+                                    backgroundColor: "white",
+                                    borderRadius: 18,
+                                    padding: 18,
+                                    marginBottom: 16,
+                                    flexDirection: "row",
+                                    alignItems: "center",
+                                    shadowColor: "#000",
+                                    shadowOpacity: 0.05,
+                                    shadowRadius: 8,
+                                    elevation: 2,
+                                    borderWidth: 1,
+                                    borderColor: "#e5e7eb"
+                                }}
+                            >
                                 <View style={{
-                                    alignSelf: "flex-start",
-                                    backgroundColor: policy.tagColor,
-                                    paddingHorizontal: 10,
-                                    paddingVertical: 4,
-                                    borderRadius: 8,
-                                    marginBottom: 6
+                                    width: 54,
+                                    height: 54,
+                                    borderRadius: 14,
+                                    backgroundColor: "#eff6ff",
+                                    justifyContent: "center",
+                                    alignItems: "center",
+                                    marginRight: 16
                                 }}>
-                                    <Text style={{
-                                        color: policy.textColor,
-                                        fontSize: 12,
-                                        fontWeight: "800"
+                                    <Text style={{ fontSize: 24 }}>🔖</Text>
+                                </View>
+
+                                <View style={{ flex: 1 }}>
+                                    <View style={{
+                                        alignSelf: "flex-start",
+                                        backgroundColor: "#dbeafe",
+                                        paddingHorizontal: 10,
+                                        paddingVertical: 4,
+                                        borderRadius: 8,
+                                        marginBottom: 6
                                     }}>
-                                        {policy.category}
+                                        <Text style={{
+                                            color: "#2563eb",
+                                            fontSize: 12,
+                                            fontWeight: "800"
+                                        }}>
+                                            {policy.keywords || "정책"}
+                                        </Text>
+                                    </View>
+
+                                    <Text style={{
+                                        fontSize: 17,
+                                        fontWeight: "900",
+                                        color: "#111827",
+                                        marginBottom: 5
+                                    }}>
+                                        {policy.title}
+                                    </Text>
+
+                                    <Text numberOfLines={2} style={{ color: "#64748b", lineHeight: 20 }}>
+                                        {policy.desc || policy.description || "설명 정보가 없습니다."}
                                     </Text>
                                 </View>
 
-                                <Text style={{
-                                    fontSize: 17,
-                                    fontWeight: "900",
-                                    color: "#111827",
-                                    marginBottom: 5
-                                }}>
-                                    {policy.title}
+                                <Text style={{ color: "#3b82f6", fontSize: 24, marginLeft: 8 }}>
+                                    ❤️
                                 </Text>
-
-                                <Text style={{ color: "#64748b", lineHeight: 20 }}>
-                                    {policy.desc}
-                                </Text>
-                            </View>
-
-                            <Text style={{ color: "#3b82f6", fontSize: 24, marginLeft: 8 }}>
-                                🔖
-                            </Text>
-                        </View>
-                    ))}
+                            </TouchableOpacity>
+                        ))
+                    )}
 
                     {/* 로그아웃 버튼 */}
                     <TouchableOpacity

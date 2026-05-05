@@ -17,13 +17,16 @@ import api from "../api/api";
 
 const screenWidth = Dimensions.get("window").width;
 
+
 export default function App() {
   const [policies, setPolicies] = useState([]);
   const [unemployedPolicies, setUnemployedPolicies] = useState([]);
   const [loading, setLoading] = useState(true);
   const [unemployedLoading, setUnemployedLoading] = useState(true);
   const [keyword, setKeyword] = useState("");
-  
+  const [favorites, setFavorites] = useState([]);
+
+
 
   const scrollRef = useRef(null);
   const currentIndex = useRef(0);
@@ -31,6 +34,8 @@ export default function App() {
   useEffect(() => {
     fetchPolicies();
     fetchUnemployedPolicies();
+    fetchFavorites();
+
   }, []);
 
   useEffect(() => {
@@ -94,6 +99,31 @@ export default function App() {
   const handleSearch = () => {
     if (!keyword.trim()) return;
     router.push(`/policies?keyword=${encodeURIComponent(keyword.trim())}`);
+  };
+
+  const fetchFavorites = async () => {
+    try {
+      const res = await api.get("/api/favorites/me");
+
+      const ids = res.data.map((p) => p.id);
+
+      setFavorites(ids);
+    } catch (error) {
+      console.log("찜 목록 불러오기 실패", error);
+    }
+  };
+  const toggleFavorite = async (policyId) => {
+    setFavorites((prev) =>
+      prev.includes(policyId)
+        ? prev.filter((id) => id !== policyId)
+        : [...prev, policyId]
+    );
+
+    try {
+      await api.post(`/api/favorites/${policyId}`);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -182,6 +212,9 @@ export default function App() {
                       views={policy.views?.toLocaleString() ?? "0"}
                       active={index === 0}
                       fixedHeight
+                      favoriteButton
+                      favorite={favorites.includes(policy.id)}
+                      onFavoritePress={() => toggleFavorite(policy.id)}
                       onPress={() => router.push(`/policy-detail?id=${policy.id}`)}
                     />
                   </View>
@@ -266,10 +299,13 @@ export default function App() {
                         views={policy.views?.toLocaleString() ?? "0"}
                         active={index === 0}
                         fixedHeight
+                        favoriteButton
+                        favorite={favorites.includes(policy.id)}
+                        onFavoritePress={() => toggleFavorite(policy.id)}
                         onPress={() =>
                           router.push(`/policy-detail?id=${policy.id}`)
                         }
-                          />
+                      />
                     </View>
                   ))}
                 </ScrollView>

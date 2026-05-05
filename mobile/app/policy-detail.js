@@ -14,9 +14,11 @@ export default function PolicyDetail() {
     const { id } = useLocalSearchParams();
     const [policy, setPolicy] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [favorite, setFavorite] = useState(false);
 
     useEffect(() => {
         fetchPolicyDetail();
+        fetchFavorites();
     }, [id]);
 
     const fetchPolicyDetail = async () => {
@@ -27,6 +29,27 @@ export default function PolicyDetail() {
             console.log("정책 상세 불러오기 실패:", error);
         } finally {
             setLoading(false);
+        }
+    };
+    const fetchFavorites = async () => {
+        try {
+            const res = await api.get("/api/favorites/me");
+            const ids = res.data.map((p) => p.id);
+
+            setFavorite(ids.includes(Number(id)));
+        } catch (error) {
+            console.log("찜 목록 불러오기 실패:", error);
+        }
+    };
+
+    const toggleFavorite = async () => {
+        setFavorite((prev) => !prev);
+
+        try {
+            await api.post(`/api/favorites/${id}`);
+        } catch (error) {
+            setFavorite((prev) => !prev);
+            console.log("찜 실패:", error);
         }
     };
 
@@ -112,7 +135,11 @@ export default function PolicyDetail() {
                         정책 상세정보
                     </Text>
 
-                    <Text style={{ fontSize: 20 }}>🔖</Text>
+                    <TouchableOpacity onPress={toggleFavorite}>
+                        <Text style={{ fontSize: 22 }}>
+                            {favorite ? "❤️" : "♡"}
+                        </Text>
+                    </TouchableOpacity>
                 </View>
 
                 <View
@@ -144,7 +171,7 @@ export default function PolicyDetail() {
                     <View style={{ flexDirection: "row", gap: 12 }}>
                         <InfoBox
                             title="신청 기간"
-                              value={formatPeriod(policy.applyStartDate, policy.applyEndDate)}
+                            value={formatPeriod(policy.applyStartDate, policy.applyEndDate)}
 
                         />
                         <InfoBox

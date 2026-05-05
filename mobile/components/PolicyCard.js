@@ -9,7 +9,11 @@ export default function PolicyCard({
   active,
   fixedHeight,
   onPress,
+  favoriteButton,
+  onFavoritePress,
+  favorite,
 }) {
+
   return (
     <TouchableOpacity activeOpacity={0.85} onPress={onPress}>
       <View
@@ -21,8 +25,29 @@ export default function PolicyCard({
           borderColor: active ? "#2563eb" : "transparent",
           height: fixedHeight ? 200 : undefined,
           justifyContent: fixedHeight ? "space-between" : "flex-start",
+          position: "relative",
         }}
       >
+
+        <TouchableOpacity
+          onPress={onFavoritePress}
+          style={{
+            position: "absolute",
+            top: 12,
+            right: 12,
+            width: 36,
+            height: 36,
+            borderRadius: 18,
+            backgroundColor: "#eff6ff",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 10,
+          }}
+        >
+          <Text style={{ fontSize: 18 }}>
+            {favorite ? "❤️" : "♡"}
+          </Text>
+        </TouchableOpacity>
         <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
           {tag1 &&
             tag1.split(",").map((k, i) => (
