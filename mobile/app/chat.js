@@ -8,18 +8,42 @@ import {
 } from "react-native";
 import { router } from "expo-router";
 import api from "../api/api";
+import regionData from "../data/region.json";
 
 export default function Chat() {
   const [messages, setMessages] = useState([
     {
       sender: "bot",
-      text: "안녕하세요! 청년 정책에 대해 궁금한 점이 있으신가요?"
+      text: "안녕하세요! 거주 지역과 궁금한 정책 분야를 함께 말씀해주시면 더 정확한 청년 정책을 알려드릴 수 있어요. 예: 서울 취업 지원 정책 알려줘"
     }
   ]);
 
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const scrollRef = useRef(null);
+
+  const getRegionSuggestions = () => {
+    const text = input.trim();
+    if (!text) return [];
+
+    const result = new Set();
+
+    Object.entries(regionData).forEach(([sido, districts]) => {
+      if (sido.includes(text)) result.add(sido);
+
+      districts.forEach((district) => {
+        const full = `${sido} ${district}`;
+
+        if (district.includes(text) || full.includes(text)) {
+          result.add(full);
+        }
+      });
+    });
+
+    return [...result].slice(0, 10);
+  };
+
+  const filteredRegions = getRegionSuggestions();
 
   useEffect(() => {
     scrollRef.current?.scrollToEnd({ animated: true });
@@ -270,6 +294,30 @@ export default function Chat() {
         borderTopColor: "#e5e7eb",
         backgroundColor: "white"
       }}>
+
+        {filteredRegions.length > 0 && (
+          <ScrollView horizontal style={{ marginBottom: 10 }}>
+            {filteredRegions.map((region, index) => (
+              <TouchableOpacity
+                key={index}
+                onPress={() => setInput(region + " ")}
+                style={{
+                  marginRight: 8,
+                  paddingHorizontal: 13,
+                  paddingVertical: 8,
+                  backgroundColor: "#eff6ff",
+                  borderRadius: 16,
+                  borderWidth: 1,
+                  borderColor: "#bfdbfe"
+                }}
+              >
+                <Text style={{ color: "#2563eb", fontWeight: "800" }}>
+                  {region}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        )}
         <View style={{
           flexDirection: "row",
           alignItems: "center",
