@@ -109,8 +109,16 @@ export default function Policies() {
                         marginBottom: 18,
                     }}
                 >
-                    <TouchableOpacity onPress={() => router.back()}>
-                        <Text style={{ fontSize: 22 }}>‹</Text>
+                    <TouchableOpacity
+                        onPress={() => {
+                            if (router.canGoBack()) {
+                                router.back();
+                            } else {
+                                router.replace("/");
+                            }
+                        }}
+                    >
+                        <Text style={{ fontSize: 24 }}>‹</Text>
                     </TouchableOpacity>
 
                     <Text style={{ fontSize: 20, fontWeight: "900" }}>
@@ -179,18 +187,22 @@ export default function Policies() {
                     paddingHorizontal: 22,
                     paddingBottom: 40,
                 }}
-                renderItem={({ item }) => (
-                    <View style={{ marginBottom: 14 }}>
-                        <PolicyCard
-                            title={item.title}
-                            desc={item.desc}
-                            tag1={item.category}
-                            tag2={item.region}
-                            views={item.views?.toLocaleString() ?? "0"}
-                            onPress={() => router.push(`/policy-detail?id=${item.id}`)}
-                        />
-                    </View>
-                )}
+                renderItem={({ item }) => {
+                    console.log(item);
+
+                    return (
+                        <View style={{ marginBottom: 14 }}>
+                            <PolicyCard
+                                title={item.title}
+                                desc={item.desc}
+                                tag1={item.keyword}
+                                tag2={item.region}
+                                views={item.views?.toLocaleString() ?? "0"}
+                                onPress={() => router.push(`/policy-detail?id=${item.id}`)}
+                            />
+                        </View>
+                    );
+                }}
                 onEndReached={() => fetchPolicies(page + 1)}
                 onEndReachedThreshold={0.5}
                 ListFooterComponent={

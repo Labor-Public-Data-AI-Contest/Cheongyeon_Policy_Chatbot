@@ -85,8 +85,16 @@ export default function Chat() {
         flexDirection: "row",
         alignItems: "center"
       }}>
-        <TouchableOpacity onPress={() => router.back()}>
-          <Text style={{ fontSize: 28 }}>‹</Text>
+        <TouchableOpacity
+          onPress={() => {
+            if (router.canGoBack()) {
+              router.back();
+            } else {
+              router.replace("/");
+            }
+          }}
+        >
+          <Text style={{ fontSize: 24 }}>‹</Text>
         </TouchableOpacity>
 
         <Text style={{

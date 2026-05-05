@@ -23,32 +23,38 @@ export default function PolicyCard({
           justifyContent: fixedHeight ? "space-between" : "flex-start",
         }}
       >
-        <View style={{ flexDirection: "row", gap: 8 }}>
-          <Text
-            numberOfLines={1}
-            style={{
-              backgroundColor: "#eff6ff",
-              color: "#2563eb",
-              padding: 6,
-              borderRadius: 8,
-              fontWeight: "700",
-            }}
-          >
-            {tag1}
-          </Text>
+        <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+          {tag1 &&
+            tag1.split(",").map((k, i) => (
+              <Text
+                key={i}
+                numberOfLines={1}
+                style={{
+                  backgroundColor: "#eff6ff",
+                  color: "#2563eb",
+                  padding: 6,
+                  borderRadius: 8,
+                  fontWeight: "700",
+                }}
+              >
+                {k.trim()}
+              </Text>
+            ))}
 
-          <Text
-            numberOfLines={1}
-            style={{
-              backgroundColor: "#f1f5f9",
-              padding: 6,
-              borderRadius: 8,
-              fontWeight: "700",
-              maxWidth: 130,
-            }}
-          >
-            {tag2}
-          </Text>
+          {tag2 && (
+            <Text
+              numberOfLines={1}
+              style={{
+                backgroundColor: "#f1f5f9",
+                padding: 6,
+                borderRadius: 8,
+                fontWeight: "700",
+                maxWidth: 130,
+              }}
+            >
+              {tag2}
+            </Text>
+          )}
         </View>
 
         <Text

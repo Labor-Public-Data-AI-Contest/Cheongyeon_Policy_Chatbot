@@ -11,6 +11,7 @@ public class PolicyCardResponseDto {
     private String desc;
     private String category;
     private String region;
+    private String keywords;
     private Integer views;
 
     public PolicyCardResponseDto(Policy policy) {
@@ -18,6 +19,7 @@ public class PolicyCardResponseDto {
         this.title = policy.getTitle();
         this.desc = policy.getDescription();
         this.category = policy.getCategory();
+        this.keywords = policy.getKeywords();
         this.region = policy.getRegion();
         this.views = policy.getViews();
     }
