@@ -56,6 +56,15 @@ export default function PolicyDetail() {
             console.log("URL 열기 실패:", error);
         }
     };
+    const formatPeriod = (start, end) => {
+        if (!hasValue(start) && !hasValue(end)) return "상시";
+
+        if (start === "1900-01-01" || end === "2262-04-11") {
+            return "상시";
+        }
+
+        return `${hasValue(start) ? start : "-"} ~ ${hasValue(end) ? end : "-"}`;
+    };
 
     if (loading) {
         return (
@@ -135,8 +144,8 @@ export default function PolicyDetail() {
                     <View style={{ flexDirection: "row", gap: 12 }}>
                         <InfoBox
                             title="신청 기간"
-                            value={`${hasValue(policy.applyStartDate) ? policy.applyStartDate : "-"} ~ ${hasValue(policy.applyEndDate) ? policy.applyEndDate : "-"
-                                }`}
+                              value={formatPeriod(policy.applyStartDate, policy.applyEndDate)}
+
                         />
                         <InfoBox
                             title="연령"
