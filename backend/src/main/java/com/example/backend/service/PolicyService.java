@@ -10,7 +10,9 @@ import org.springframework.stereotype.Service;
 
 import com.example.backend.entity.Policy;
 
+import java.time.LocalDate;
 import java.util.List;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -60,5 +62,28 @@ public class PolicyService {
         return policyRepository
                 .findByCategoryContainingIgnoreCase(category, PageRequest.of(page, size))
                 .map(PolicyCardResponseDto::new);
+    }
+
+    public List<PolicyCardResponseDto> getDeadlinePolicies() {
+        LocalDate today = LocalDate.now();
+        LocalDate limit = today.plusDays(10);
+
+        return policyRepository.findAll().stream()
+                .filter(policy -> {
+                    try {
+                        if (policy.getApplyEndDate() == null || policy.getApplyEndDate().isBlank()) {
+                            return false;
+                        }
+
+                        LocalDate endDate = LocalDate.parse(policy.getApplyEndDate());
+
+                        return !endDate.isBefore(today) && !endDate.isAfter(limit);
+                    } catch (Exception e) {
+                        return false;
+                    }
+                })
+                .map(PolicyCardResponseDto::new)
+                .limit(10)
+                .toList();
     }
 }

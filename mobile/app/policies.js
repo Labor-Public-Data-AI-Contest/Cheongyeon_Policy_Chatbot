@@ -209,7 +209,7 @@ export default function Policies() {
             <PolicyCard
               title={item.title}
               desc={item.desc}
-              tag1={item.keyword ?? item.category}
+              tag1={item.keywords}
               tag2={item.region}
               views={item.views?.toLocaleString() ?? "0"}
               onPress={() => router.push(`/policy-detail?id=${item.id}`)}

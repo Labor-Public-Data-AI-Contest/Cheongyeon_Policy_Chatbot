@@ -50,6 +50,11 @@ public class PolicyController {
         return policyService.getByCategory(category, page, size);
     }
 
+     @GetMapping("/deadline")
+    public List<PolicyCardResponseDto> getDeadlinePolicies() {
+        return policyService.getDeadlinePolicies();
+    }
+
     @GetMapping("/{id}")
     public Policy getPolicyDetail(@PathVariable Long id) {
         return policyService.getPolicyDetail(id);
@@ -60,5 +65,6 @@ public class PolicyController {
         return policyService.getRandomByKeywords();
     }
 
-    
+
+
 }

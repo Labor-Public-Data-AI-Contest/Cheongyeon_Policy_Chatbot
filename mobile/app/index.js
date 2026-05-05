@@ -61,7 +61,7 @@ export default function App() {
 
   const fetchUnemployedPolicies = async () => {
     try {
-      const res = await api.get("/api/policies/recommend");
+      const res = await api.get("/api/policies/deadline");
 
       setUnemployedPolicies(res.data);
     } catch (error) {
@@ -177,7 +177,7 @@ export default function App() {
                     <PolicyCard
                       title={policy.title}
                       desc={policy.desc}
-                      tag1={policy.category}
+                      tag1={policy.keywords}
                       tag2={policy.region}
                       views={policy.views?.toLocaleString() ?? "0"}
                       active={index === 0}
@@ -235,8 +235,7 @@ export default function App() {
 
           <View style={{ marginTop: 42 }}>
             <Text style={{ fontSize: 20, fontWeight: "900", lineHeight: 28 }}>
-              <Text style={{ color: "#2563eb" }}>미취업자</Text>들을 위한{"\n"}
-              맞춤 정책이에요! 🎯
+              <Text style={{ color: "#2563eb" }}>마감 임박</Text> 정책이에요! ⏰
             </Text>
 
             <View style={{ marginTop: 14 }}>
@@ -262,7 +261,7 @@ export default function App() {
                       <PolicyCard
                         title={policy.title}
                         desc={policy.desc}
-                        tag1={policy.category}
+                        tag1={policy.keywords}
                         tag2={policy.region}
                         views={policy.views?.toLocaleString() ?? "0"}
                         active={index === 0}
