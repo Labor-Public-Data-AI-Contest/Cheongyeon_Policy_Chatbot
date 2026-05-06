@@ -28,10 +28,10 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/api/policies/**").permitAll()
+                        .requestMatchers("/api/notifications/**").permitAll()
                         .requestMatchers("/api/favorites/**").authenticated()
                         .requestMatchers("/api/user/**").authenticated()
-                        .anyRequest().permitAll()
-                )
+                        .anyRequest().permitAll())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

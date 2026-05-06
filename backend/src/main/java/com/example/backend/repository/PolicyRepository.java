@@ -13,9 +13,13 @@ import java.util.Optional;
 import java.util.List;
 
 public interface PolicyRepository extends JpaRepository<Policy, Long> {
+    
+
     Optional<Policy> findByPolicyNo(String policyNo);
 
     List<Policy> findTop5ByOrderByViewsDesc();
+
+    boolean existsByPolicyNo(String policyNo);
 
     @Query(value = "SELECT * FROM policies ORDER BY RAND() LIMIT 5", nativeQuery = true)
     List<Policy> findRandom5();

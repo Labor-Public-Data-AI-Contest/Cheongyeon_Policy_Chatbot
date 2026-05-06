@@ -9,6 +9,7 @@ import {
   Dimensions,
 } from "react-native";
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import Header from "../components/Header";
 import PolicyCard from "../components/PolicyCard";
 import Category from "../components/Category";
@@ -102,6 +103,12 @@ export default function App() {
   };
 
   const fetchFavorites = async () => {
+    const token = await AsyncStorage.getItem("token");
+
+    if (!token) {
+      setFavorites([]);
+      return;
+    }
     try {
       const res = await api.get("/api/favorites/me");
 
@@ -113,6 +120,13 @@ export default function App() {
     }
   };
   const toggleFavorite = async (policyId) => {
+    const token = await AsyncStorage.getItem("token");
+
+    if (!token) {
+      router.push("/login");
+      return;
+    }
+
     setFavorites((prev) =>
       prev.includes(policyId)
         ? prev.filter((id) => id !== policyId)

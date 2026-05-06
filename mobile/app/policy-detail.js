@@ -9,6 +9,8 @@ import {
 } from "react-native";
 import { router, useLocalSearchParams } from "expo-router";
 import api from "../api/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
 
 export default function PolicyDetail() {
     const { id } = useLocalSearchParams();
@@ -32,6 +34,12 @@ export default function PolicyDetail() {
         }
     };
     const fetchFavorites = async () => {
+        const token = await AsyncStorage.getItem("token");
+
+        if (!token) {
+            setFavorite(false);
+            return;
+        }
         try {
             const res = await api.get("/api/favorites/me");
             const ids = res.data.map((p) => p.id);
@@ -43,6 +51,14 @@ export default function PolicyDetail() {
     };
 
     const toggleFavorite = async () => {
+
+        const token = await AsyncStorage.getItem("token");
+
+        if (!token) {
+            router.push("/login");
+            return;
+        }
+
         setFavorite((prev) => !prev);
 
         try {

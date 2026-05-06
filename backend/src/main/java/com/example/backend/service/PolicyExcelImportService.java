@@ -8,13 +8,16 @@ import org.springframework.stereotype.Service;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
 public class PolicyExcelImportService {
 
     private final PolicyRepository policyRepository;
+    private final NotificationService notificationService;
 
     public void importExcel(InputStream inputStream) {
         try (Workbook workbook = WorkbookFactory.create(inputStream)) {
@@ -23,14 +26,28 @@ public class PolicyExcelImportService {
             Row headerRow = sheet.getRow(0);
             Map<String, Integer> headers = getHeaders(headerRow);
 
+            Set<String> excelPolicyNos = new HashSet<>();
+
             for (int i = 1; i <= sheet.getLastRowNum(); i++) {
                 Row row = sheet.getRow(i);
-                if (row == null) continue;
+                if (row == null) {
+                    continue;
+                }
 
                 String policyNo = getCell(row, headers, "정책번호");
                 String title = getCell(row, headers, "정책명");
 
-                if (title == null || title.isBlank()) continue;
+                if (policyNo == null || policyNo.isBlank()) {
+                    continue;
+                }
+
+                if (title == null || title.isBlank()) {
+                    continue;
+                }
+
+                excelPolicyNos.add(policyNo);
+
+                boolean isNewPolicy = !policyRepository.existsByPolicyNo(policyNo);
 
                 Policy policy = policyRepository.findByPolicyNo(policyNo)
                         .orElse(new Policy());
@@ -77,7 +94,21 @@ public class PolicyExcelImportService {
                     policy.setViews(0);
                 }
 
-                policyRepository.save(policy);
+                policy.setActive(true);
+
+                Policy savedPolicy = policyRepository.save(policy);
+
+                if (isNewPolicy) {
+                    notificationService.createNewPolicyNotification(savedPolicy);
+                    System.out.println("✅ 새 정책 저장 + 알림 생성: " + savedPolicy.getTitle());
+                }
+            }
+
+            for (Policy savedPolicy : policyRepository.findAll()) {
+                if (!excelPolicyNos.contains(savedPolicy.getPolicyNo())) {
+                    savedPolicy.setActive(false);
+                    policyRepository.save(savedPolicy);
+                }
             }
 
         } catch (Exception e) {
@@ -99,10 +130,14 @@ public class PolicyExcelImportService {
 
     private String getCell(Row row, Map<String, Integer> headers, String columnName) {
         Integer index = headers.get(columnName);
-        if (index == null) return "";
+        if (index == null) {
+            return "";
+        }
 
         Cell cell = row.getCell(index);
-        if (cell == null) return "";
+        if (cell == null) {
+            return "";
+        }
 
         DataFormatter formatter = new DataFormatter();
         return formatter.formatCellValue(cell).trim();
@@ -112,11 +147,15 @@ public class PolicyExcelImportService {
         try {
             String value = getCell(row, headers, columnName);
 
-            if (value == null || value.isBlank()) return null;
+            if (value == null || value.isBlank()) {
+                return null;
+            }
 
             value = value.replaceAll("[^0-9]", "");
 
-            if (value.isBlank()) return null;
+            if (value.isBlank()) {
+                return null;
+            }
 
             return Integer.parseInt(value);
         } catch (Exception e) {

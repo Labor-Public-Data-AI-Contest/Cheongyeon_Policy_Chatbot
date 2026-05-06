@@ -76,4 +76,6 @@ public class Policy {
     private String referenceUrl2;
 
     private Integer views = 0;
+
+    private boolean active = true;
 }
