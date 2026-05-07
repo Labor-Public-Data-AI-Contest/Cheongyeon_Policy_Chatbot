@@ -7,7 +7,7 @@ import {
   ScrollView
 } from "react-native";
 import { router } from "expo-router";
-import api from "../api/api";
+import chatApi from "../api/chatApi";
 import regionData from "../data/region.json";
 
 export default function Chat() {
@@ -64,7 +64,7 @@ export default function Chat() {
     setLoading(true);
 
     try {
-      const res = await api.post("/api/chat", {
+      const res = await chatApi.post("/api/chat", {
         message: userMessage
       });
 
