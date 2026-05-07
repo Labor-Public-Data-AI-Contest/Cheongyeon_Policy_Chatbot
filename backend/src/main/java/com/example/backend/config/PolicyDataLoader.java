@@ -14,7 +14,7 @@ public class PolicyDataLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        ClassPathResource resource = new ClassPathResource("data/청년정책_final_data.xlsx");
+        ClassPathResource resource = new ClassPathResource("data/policy_final_data.xlsx");
 
         if (resource.exists()) {
             policyExcelImportService.importExcel(resource.getInputStream());
