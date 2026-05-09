@@ -1,9 +1,9 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.PolicyCardResponseDto;
+import com.example.backend.entity.Policy;
 import com.example.backend.service.PolicyService;
 import lombok.RequiredArgsConstructor;
-import com.example.backend.entity.Policy;
 
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -50,14 +50,9 @@ public class PolicyController {
         return policyService.getByCategory(category, page, size);
     }
 
-     @GetMapping("/deadline")
+    @GetMapping("/deadline")
     public List<PolicyCardResponseDto> getDeadlinePolicies() {
         return policyService.getDeadlinePolicies();
-    }
-
-    @GetMapping("/{id}")
-    public Policy getPolicyDetail(@PathVariable Long id) {
-        return policyService.getPolicyDetail(id);
     }
 
     @GetMapping("/recommend")
@@ -65,6 +60,8 @@ public class PolicyController {
         return policyService.getRandomByKeywords();
     }
 
-
-
+    @GetMapping("/{id}")
+    public Policy getPolicyDetail(@PathVariable Long id) {
+        return policyService.getPolicyDetail(id);
+    }
 }
