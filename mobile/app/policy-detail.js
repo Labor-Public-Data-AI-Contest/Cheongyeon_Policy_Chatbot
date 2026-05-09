@@ -23,6 +23,19 @@ export default function PolicyDetail() {
         fetchFavorites();
     }, [id]);
 
+    const formatDate = (date) => {
+        if (!hasValue(date)) return "-";
+
+        if (date === "1900-01-01" || date === "2262-04-11") {
+            return "상시";
+        }
+
+        const [year, month, day] = date.split("-");
+
+        return `${year}년 ${Number(month)}월 ${Number(day)}일`;
+    };
+
+
     const fetchPolicyDetail = async () => {
         try {
             const res = await api.get(`/api/policies/${id}`);
@@ -102,7 +115,7 @@ export default function PolicyDetail() {
             return "상시";
         }
 
-        return `${hasValue(start) ? start : "-"} ~ ${hasValue(end) ? end : "-"}`;
+        return `${formatDate(start)} ~ ${formatDate(end)}`;
     };
 
     if (loading) {
@@ -219,8 +232,7 @@ export default function PolicyDetail() {
                         <Section title="신청 방법">
                             <View style={styles.card}>
                                 <Text style={{ fontWeight: "900", marginBottom: 10 }}>
-                                    📅 {hasValue(policy.applyStartDate) ? policy.applyStartDate : "-"} ~{" "}
-                                    {hasValue(policy.applyEndDate) ? policy.applyEndDate : "-"}
+                                    📅 {formatPeriod(policy.applyStartDate, policy.applyEndDate)}
                                 </Text>
 
                                 {hasValue(policy.applyMethod) && (
