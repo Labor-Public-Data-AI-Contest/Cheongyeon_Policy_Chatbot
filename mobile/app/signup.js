@@ -31,7 +31,7 @@ export default function Signup() {
     const [selectedGu, setSelectedGu] = useState("");
 
     const [agree, setAgree] = useState(false);
-    const [showSidoList, setShowSidoList] = useState(false);
+    const [activeRegionField, setActiveRegionField] = useState(null);
 
     const [userid, setUserid] = useState("");
     const [userpassword, setUserpassword] = useState("");
@@ -39,18 +39,20 @@ export default function Signup() {
     const [idChecked, setIdChecked] = useState(false);
     const [idMessage, setIdMessage] = useState("");
 
-    const filteredSido = showSidoList
-        ? inputSido
-            ? sidoList.filter(item => item.startsWith(inputSido))
-            : sidoList
+    const filteredSido = activeRegionField === "sido"
+        ? inputSido.trim()
+            ? sidoList.filter(item => item.includes(inputSido.trim()))
+            : []
         : [];
 
-    const subList = selectedSido ? regionMap[selectedSido] || [] : [];
+    const subList = selectedSido
+        ? regionMap[selectedSido] || []
+        : Object.values(regionMap).flat();
 
-    const filteredGu = selectedSido
-        ? inputGu
-            ? subList.filter(item => item.startsWith(inputGu))
-            : subList
+    const filteredGu = activeRegionField === "gu"
+        ? inputGu.trim()
+            ? [...new Set(subList.filter(item => item.includes(inputGu.trim())))]
+            : []
         : [];
 
     const onChangeDate = (event, selectedDate) => {
@@ -208,7 +210,7 @@ export default function Signup() {
                                     setIdChecked(true);
                                     setIdMessage("사용 가능한 아이디입니다.");
                                 }
-                            } catch (e) {
+                            } catch (_e) {
                                 setIdMessage("중복 확인에 실패했습니다.");
                             }
                         }}
@@ -311,9 +313,10 @@ export default function Signup() {
                 <View style={{ flexDirection: "row", gap: 8 }}>
                     <TextInput
                         value={inputSido}
-                        onFocus={() => setShowSidoList(true)}
+                        onFocus={() => setActiveRegionField("sido")}
                         onChangeText={(text) => {
                             setInputSido(text);
+                            setActiveRegionField("sido");
                             setSelectedSido("");
                             setInputGu("");
                             setSelectedGu("");
@@ -333,22 +336,22 @@ export default function Signup() {
                         value={inputGu}
                         onChangeText={(text) => {
                             setInputGu(text);
+                            setActiveRegionField("gu");
                             setSelectedGu("");
                         }}
-                        placeholder="구/시 선택"
-                        editable={!!selectedSido}
+                        onFocus={() => setActiveRegionField("gu")}
+                        placeholder="구/시/군 선택"
                         style={[
                             inputStyle,
                             {
                                 flex: 1,
                                 marginBottom: 0,
-                                opacity: selectedSido ? 1 : 0.55
                             }
                         ]}
                     />
                 </View>
 
-                {filteredSido.length > 0  && showSidoList && !selectedSido && (
+                {filteredSido.length > 0 && (
                     <View style={dropdownStyle}>
                         {filteredSido.map(item => (
                             <TouchableOpacity
@@ -358,7 +361,7 @@ export default function Signup() {
                                     setSelectedSido(item);
                                     setInputGu("");
                                     setSelectedGu("");
-                                    setShowSidoList(false);
+                                    setActiveRegionField(null);
                                 }}
                                 style={dropdownItemStyle}
                             >
@@ -369,7 +372,7 @@ export default function Signup() {
                     </View>
                 )}
 
-                {selectedSido && filteredGu.length > 0 && !selectedGu && (
+                {filteredGu.length > 0 && (
                     <View style={dropdownStyle}>
                         {filteredGu.map(item => (
                             <TouchableOpacity
@@ -377,12 +380,13 @@ export default function Signup() {
                                 onPress={() => {
                                     setInputGu(item);
                                     setSelectedGu(item);
+                                    setActiveRegionField(null);
                                 }}
                                 style={dropdownItemStyle}
                             >
                                 <Text style={{ fontWeight: "800" }}>{item}</Text>
                                 <Text style={{ color: "#64748b", fontSize: 12 }}>
-                                    {selectedSido} {item}
+                                    {selectedSido ? `${selectedSido} ${item}` : item}
                                 </Text>
                             </TouchableOpacity>
                         ))}
@@ -453,6 +457,7 @@ const inputStyle = {
     paddingHorizontal: 16,
     marginBottom: 8,
     color: "#111",
+    outlineStyle: "none",
 };
 
 const dateInputStyle = {

@@ -7,4 +7,5 @@ import lombok.Setter;
 @Setter
 public class ChatRequestDto {
     private String message;
+    private String region;
 }
