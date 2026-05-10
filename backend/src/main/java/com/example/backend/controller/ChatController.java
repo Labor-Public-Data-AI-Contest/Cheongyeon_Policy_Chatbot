@@ -1,21 +1,9 @@
 package com.example.backend.controller;
 
-import com.example.backend.service.ChatService;
-import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.*;
-
-import com.example.backend.dto.ChatRequestDto;
-import com.example.backend.dto.ChatResponseDto;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequiredArgsConstructor
 @RequestMapping("/api/chat")
 public class ChatController {
-
-    private final ChatService chatService;
-
-    @PostMapping
-    public ChatResponseDto chat(@RequestBody ChatRequestDto request) {
-        return chatService.ask(request.getMessage());
-    }
 }
