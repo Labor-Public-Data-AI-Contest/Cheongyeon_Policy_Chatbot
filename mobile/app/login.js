@@ -74,7 +74,7 @@ export default function Login() {
       </Text>
 
       <Text style={{ color: "#64748b", lineHeight: 21, marginBottom: 32 }}>
-        청년플랫폼의 다양한 정책 정보를{"\n"}
+        청정플랫폼의 다양한 정책 정보를{"\n"}
         지금 바로 확인해보세요.
       </Text>
 

@@ -104,7 +104,7 @@ export default function PolicyCard({
           {desc}
         </Text>
 
-        <Text style={{ marginTop: 10 }}>👁 {views}</Text>
+        {/* <Text style={{ marginTop: 10 }}>👁 {views}</Text> */}
       </View>
     </TouchableOpacity>
   );

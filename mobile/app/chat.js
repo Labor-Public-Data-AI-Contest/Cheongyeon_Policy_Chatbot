@@ -352,12 +352,12 @@ export default function Chat() {
           style={{
             flex: 1,
             textAlign: "center",
-            fontSize: 17,
+            fontSize: 22,
             fontWeight: "900",
             marginRight: 28,
           }}
         >
-          청년정책 AI 봇
+          靑定
         </Text>
       </View>
 

@@ -171,7 +171,7 @@ export default function Signup() {
                 </View>
 
                 <Text style={{ fontSize: 24, fontWeight: "900", lineHeight: 32 }}>
-                    청년플랫폼에 오신 것을{"\n"}
+                    청정플랫폼에 오신 것을{"\n"}
                     환영합니다! 😊
                 </Text>
 
@@ -190,6 +190,7 @@ export default function Signup() {
                         }}
                         placeholder="아이디를 입력해주세요"
                         style={[inputStyle, { flex: 1 }]}
+                        placeholderTextColor="#64748b"
                     />
 
                     <TouchableOpacity
@@ -244,6 +245,7 @@ export default function Signup() {
                     placeholder="영문+숫자 포함 8자리 이상"
                     secureTextEntry
                     style={inputStyle}
+                    placeholderTextColor="#64748b"
                 />
 
                 <Text style={[labelStyle, { marginTop: 12 }]}>비밀번호 확인</Text>
@@ -252,6 +254,7 @@ export default function Signup() {
                     onChangeText={setPasswordCheck}
                     placeholder="비밀번호를 다시 입력해주세요"
                     secureTextEntry
+                    placeholderTextColor="#64748b"
                     style={inputStyle}
                 />
 
@@ -273,6 +276,7 @@ export default function Signup() {
                     onChangeText={setName}
                     placeholder="이름을 입력해주세요"
                     style={inputStyle}
+                    placeholderTextColor="#64748b"
                 />
 
                 <Text style={[labelStyle, { marginTop: 20 }]}>생년월일</Text>
@@ -283,6 +287,7 @@ export default function Signup() {
                         onChangeText={setBirth}
                         placeholder="1999-01-01"
                         style={inputStyle}
+                        placeholderTextColor="#64748b"
                     />
                 ) : (
                     <TouchableOpacity
@@ -330,6 +335,7 @@ export default function Signup() {
                                 borderColor: inputSido ? "#2563eb" : "#e5e7eb"
                             }
                         ]}
+                        placeholderTextColor="#64748b"
                     />
 
                     <TextInput
@@ -348,6 +354,7 @@ export default function Signup() {
                                 marginBottom: 0,
                             }
                         ]}
+                        placeholderTextColor="#64748b"
                     />
                 </View>
 

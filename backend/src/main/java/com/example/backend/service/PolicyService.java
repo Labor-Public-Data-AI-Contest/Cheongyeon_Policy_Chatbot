@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.PolicyCardResponseDto;
+import com.example.backend.entity.Policy;
 import com.example.backend.repository.PolicyRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -8,11 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.example.backend.entity.Policy;
-
 import java.time.LocalDate;
 import java.util.List;
-import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -21,7 +19,7 @@ public class PolicyService {
     private final PolicyRepository policyRepository;
 
     public List<PolicyCardResponseDto> getPopularPolicies() {
-        return policyRepository.findTop5ByOrderByViewsDesc()
+        return policyRepository.findTop5ByActiveTrueOrderByViewsDesc()
                 .stream()
                 .map(PolicyCardResponseDto::new)
                 .toList();
@@ -35,18 +33,19 @@ public class PolicyService {
     }
 
     public Page<PolicyCardResponseDto> getPolicies(int page, int size) {
-        return policyRepository.findAll(PageRequest.of(page, size))
+        return policyRepository.findByActiveTrue(PageRequest.of(page, size))
                 .map(PolicyCardResponseDto::new);
     }
 
     public Page<PolicyCardResponseDto> searchPolicies(String keyword, int page, int size) {
         return policyRepository
-                .findByTitleContainingIgnoreCase(keyword, PageRequest.of(page, size))
+                .findByTitleContainingIgnoreCaseAndActiveTrue(keyword, PageRequest.of(page, size))
                 .map(PolicyCardResponseDto::new);
     }
 
     public Policy getPolicyDetail(Long id) {
         return policyRepository.findById(id)
+                .filter(Policy::isActive)
                 .orElseThrow(() -> new IllegalArgumentException("정책을 찾을 수 없습니다."));
     }
 
@@ -60,7 +59,7 @@ public class PolicyService {
 
     public Page<PolicyCardResponseDto> getByCategory(String category, int page, int size) {
         return policyRepository
-                .findByCategoryContainingIgnoreCase(category, PageRequest.of(page, size))
+                .findByCategoryContainingIgnoreCaseAndActiveTrue(category, PageRequest.of(page, size))
                 .map(PolicyCardResponseDto::new);
     }
 
@@ -68,7 +67,8 @@ public class PolicyService {
         LocalDate today = LocalDate.now();
         LocalDate limit = today.plusDays(10);
 
-        return policyRepository.findAll().stream()
+        return policyRepository.findByActiveTrue(PageRequest.of(0, 1000))
+                .stream()
                 .filter(policy -> {
                     try {
                         if (policy.getApplyEndDate() == null || policy.getApplyEndDate().isBlank()) {

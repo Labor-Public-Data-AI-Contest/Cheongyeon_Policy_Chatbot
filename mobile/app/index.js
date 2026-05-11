@@ -195,8 +195,8 @@ export default function App() {
             }}
           >
             <Text style={{ fontSize: 20, fontWeight: "900", lineHeight: 28 }}>
-              추천 정책을{"\n"}
-              <Text style={{ color: "#2563eb" }}>랜덤으로 보여드려요!</Text> 🔥
+              🔥 추천 정책을{"\n"}
+              <Text style={{ color: "#2563eb" }}>랜덤으로 보여드려요!</Text>
             </Text>
 
             <TouchableOpacity onPress={() => router.push("/policies")}>
@@ -236,14 +236,14 @@ export default function App() {
               </ScrollView>
             )}
           </View>
-          <Text style={{ marginTop: 34, fontSize: 18, fontWeight: "900" }}>
+          <Text style={{ marginTop: 32, fontSize: 18, fontWeight: "900" }}>
             관심 분야별 정책 보기
           </Text>
 
           <ScrollView
             horizontal
             showsHorizontalScrollIndicator={false}
-            style={{ marginTop: 38 }}
+            style={{ marginTop: 20 }}
             contentContainerStyle={{ paddingRight: 22 }}
           >
             {categories.map((cat, index) => (
@@ -280,9 +280,9 @@ export default function App() {
             ))}
           </ScrollView>
 
-          <View style={{ marginTop: 42 }}>
+          <View style={{ marginTop: 24 }}>
             <Text style={{ fontSize: 20, fontWeight: "900", lineHeight: 28 }}>
-              <Text style={{ color: "#2563eb" }}>마감 임박</Text> 정책이에요! ⏰
+              <Text style={{ color: "#2563eb" }}>⏰ 마감 임박</Text> 정책이에요!
             </Text>
 
             <View style={{ marginTop: 14 }}>

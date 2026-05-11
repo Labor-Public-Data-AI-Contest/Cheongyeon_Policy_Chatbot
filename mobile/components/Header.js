@@ -12,7 +12,7 @@ export default function Header() {
     const token = await AsyncStorage.getItem("token");
     setIsLogin(!!token);
 
-    fetchUnreadCount(); 
+    fetchUnreadCount();
   };
 
   const fetchUnreadCount = async () => {
@@ -45,18 +45,28 @@ export default function Header() {
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
         <View
           style={{
-            width: 34,
-            height: 34,
-            borderRadius: 17,
+            width: 38,
+            height: 38,
+            borderRadius: 19,
             backgroundColor: "#2563eb",
             justifyContent: "center",
-            alignItems: "center"
+            alignItems: "center",
           }}
         >
-          <Text style={{ color: "white", fontWeight: "bold" }}>Y</Text>
+          <Text
+            style={{
+              color: "white",
+              fontWeight: "400",
+              fontSize: 22,
+              lineHeight: 20,
+              textAlign: "center",
+            }}
+          >
+            靑
+          </Text>
         </View>
 
-        <Text style={{ fontSize: 18, fontWeight: "800" }}>청년플랫폼</Text>
+        <Text style={{ fontSize: 22, fontWeight: "800" }}>청정</Text>
       </View>
 
       <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
